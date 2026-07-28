@@ -20,6 +20,7 @@ const paletteConfig = {
   accent: {
     primary: '#3D7BFF',
     purple: '#7C3AED',
+    sky: '#7DD3FC',
     success: '#39D98A',
     warning: '#FFB547',
     error: '#FF5B6E',

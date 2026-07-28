@@ -160,7 +160,7 @@ export const ArchitecturePage: React.FC = () => {
       title: '4. Circuit Bindings (TypeScript)',
       description:
         'Compiled Compact contracts produce TypeScript bindings with typed circuit calls. Four circuits: uploadVault, shareVault, accessVault, revokeVault.',
-      accent: palette.accent.info,
+      accent: palette.accent.sky,
       available: true,
     },
     {
