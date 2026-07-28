@@ -1,4 +1,4 @@
-// CipherGate Deployed Board Manager
+// CipherGate Deployed Vault Manager
 // SPDX-License-Identifier: Apache-2.0
 
 import {
@@ -42,6 +42,13 @@ import { inMemoryPrivateStateProvider } from '../in-memory-private-state-provide
 import { NetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import type { UnboundTransaction } from '@midnight-ntwrk/midnight-js-types';
 
+export type WalletConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
+
+export interface WalletConnectionState {
+  readonly status: WalletConnectionStatus;
+  readonly error?: string;
+}
+
 export interface InProgressVaultDeployment {
   readonly status: 'in-progress';
 }
@@ -60,19 +67,51 @@ export type VaultDeployment = InProgressVaultDeployment | DeployedVaultDeploymen
 
 export interface DeployedVaultAPIProvider {
   readonly vaultDeployments$: Observable<Array<Observable<VaultDeployment>>>;
+  readonly walletState$: Observable<WalletConnectionState>;
   readonly resolve: (contractAddress?: ContractAddress) => Observable<VaultDeployment>;
+  readonly connectWallet: () => void;
+  readonly disconnectWallet: () => void;
 }
 
 export class BrowserDeployedVaultManager implements DeployedVaultAPIProvider {
   readonly #vaultDeploymentsSubject: BehaviorSubject<Array<BehaviorSubject<VaultDeployment>>>;
+  readonly #walletStateSubject: BehaviorSubject<WalletConnectionState>;
   #initializedProviders: Promise<CipherGateProviders> | undefined;
+  #connectedAPI: ConnectedAPI | undefined;
 
   constructor(private readonly logger: Logger) {
     this.#vaultDeploymentsSubject = new BehaviorSubject<Array<BehaviorSubject<VaultDeployment>>>([]);
+    this.#walletStateSubject = new BehaviorSubject<WalletConnectionState>({ status: 'disconnected' });
     this.vaultDeployments$ = this.#vaultDeploymentsSubject;
+    this.walletState$ = this.#walletStateSubject;
   }
 
   readonly vaultDeployments$: Observable<Array<Observable<VaultDeployment>>>;
+  readonly walletState$: Observable<WalletConnectionState>;
+
+  connectWallet(): void {
+    if (this.#walletStateSubject.value.status === 'connecting' || this.#walletStateSubject.value.status === 'connected') {
+      return;
+    }
+    this.#walletStateSubject.next({ status: 'connecting' });
+    const networkId = import.meta.env.VITE_NETWORK_ID as NetworkId;
+    connectToWallet(this.logger, networkId).then(
+      (connectedAPI) => {
+        this.#connectedAPI = connectedAPI;
+        this.#walletStateSubject.next({ status: 'connected' });
+      },
+      (error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        this.#walletStateSubject.next({ status: 'error', error: message });
+      },
+    );
+  }
+
+  disconnectWallet(): void {
+    this.#initializedProviders = undefined;
+    this.#connectedAPI = undefined;
+    this.#walletStateSubject.next({ status: 'disconnected' });
+  }
 
   resolve(contractAddress?: ContractAddress): Observable<VaultDeployment> {
     const deployments = this.#vaultDeploymentsSubject.value;
@@ -82,6 +121,17 @@ export class BrowserDeployedVaultManager implements DeployedVaultAPIProvider {
     );
 
     if (deployment) {
+      return deployment;
+    }
+
+    const currentWalletState = this.#walletStateSubject.value;
+    if (currentWalletState.status !== 'connected') {
+      this.connectWallet();
+      deployment = new BehaviorSubject<VaultDeployment>({
+        status: 'failed',
+        error: new Error('Wallet not connected. Please connect your Midnight 1AM wallet first.'),
+      });
+      this.#vaultDeploymentsSubject.next([...deployments, deployment]);
       return deployment;
     }
 
@@ -101,7 +151,60 @@ export class BrowserDeployedVaultManager implements DeployedVaultAPIProvider {
   }
 
   private getProviders(): Promise<CipherGateProviders> {
-    return this.#initializedProviders ?? (this.#initializedProviders = initializeProviders(this.logger));
+    return this.#initializedProviders ?? (this.#initializedProviders = this.initializeProviders());
+  }
+
+  private async initializeProviders(): Promise<CipherGateProviders> {
+    const logger = this.logger;
+    const connectedAPI = this.#connectedAPI;
+    if (!connectedAPI) {
+      throw new Error('Wallet not connected');
+    }
+    const networkId = import.meta.env.VITE_NETWORK_ID as NetworkId;
+    const zkConfigPath = window.location.origin;
+    const keyMaterialProvider = new FetchZkConfigProvider<CipherGateCircuitKeys>(zkConfigPath, fetch.bind(window));
+    const config = await connectedAPI.getConfiguration();
+    const inMemoryCipherGatePrivateStateProvider = inMemoryPrivateStateProvider<string, CipherGatePrivateState>();
+    const shieldedAddresses = await connectedAPI.getShieldedAddresses();
+    return {
+      privateStateProvider: inMemoryCipherGatePrivateStateProvider,
+      zkConfigProvider: keyMaterialProvider,
+      proofProvider: httpClientProofProvider(config.proverServerUri!, keyMaterialProvider),
+      publicDataProvider: indexerPublicDataProvider(config.indexerUri, config.indexerWsUri),
+      walletProvider: {
+        getCoinPublicKey(): string {
+          return shieldedAddresses.shieldedCoinPublicKey;
+        },
+        getEncryptionPublicKey(): string {
+          return shieldedAddresses.shieldedEncryptionPublicKey;
+        },
+        balanceTx: async (tx: UnboundTransaction, ttl?: Date): Promise<FinalizedTransaction> => {
+          try {
+            logger.info({ tx, ttl }, 'Balancing transaction via wallet');
+            const serializedTx = toHex(tx.serialize());
+            const received = await connectedAPI.balanceUnsealedTransaction(serializedTx);
+            return Transaction.deserialize<SignatureEnabled, Proof, Binding>(
+              'signature',
+              'proof',
+              'binding',
+              fromHex(received.tx),
+            );
+          } catch (e) {
+            logger.error({ error: e }, 'Error balancing transaction via wallet');
+            throw e;
+          }
+        },
+      },
+      midnightProvider: {
+        submitTx: async (tx: FinalizedTransaction): Promise<TransactionId> => {
+          await connectedAPI.submitTransaction(toHex(tx.serialize()));
+          const txIdentifiers = tx.identifiers();
+          const txId = txIdentifiers[0];
+          logger.info({ txIdentifiers }, 'Submitted transaction via wallet');
+          return txId;
+        },
+      },
+    };
   }
 
   private async deployDeployment(deployment: BehaviorSubject<VaultDeployment>): Promise<void> {
@@ -142,55 +245,6 @@ export class BrowserDeployedVaultManager implements DeployedVaultAPIProvider {
   }
 }
 
-const initializeProviders = async (logger: Logger): Promise<CipherGateProviders> => {
-  const networkId = import.meta.env.VITE_NETWORK_ID as NetworkId;
-  const connectedAPI = await connectToWallet(logger, networkId);
-  const zkConfigPath = window.location.origin;
-  const keyMaterialProvider = new FetchZkConfigProvider<CipherGateCircuitKeys>(zkConfigPath, fetch.bind(window));
-  const config = await connectedAPI.getConfiguration();
-  const inMemoryCipherGatePrivateStateProvider = inMemoryPrivateStateProvider<string, CipherGatePrivateState>();
-  const shieldedAddresses = await connectedAPI.getShieldedAddresses();
-  return {
-    privateStateProvider: inMemoryCipherGatePrivateStateProvider,
-    zkConfigProvider: keyMaterialProvider,
-    proofProvider: httpClientProofProvider(config.proverServerUri!, keyMaterialProvider),
-    publicDataProvider: indexerPublicDataProvider(config.indexerUri, config.indexerWsUri),
-    walletProvider: {
-      getCoinPublicKey(): string {
-        return shieldedAddresses.shieldedCoinPublicKey;
-      },
-      getEncryptionPublicKey(): string {
-        return shieldedAddresses.shieldedEncryptionPublicKey;
-      },
-      balanceTx: async (tx: UnboundTransaction, ttl?: Date): Promise<FinalizedTransaction> => {
-        try {
-          logger.info({ tx, ttl }, 'Balancing transaction via wallet');
-          const serializedTx = toHex(tx.serialize());
-          const received = await connectedAPI.balanceUnsealedTransaction(serializedTx);
-          return Transaction.deserialize<SignatureEnabled, Proof, Binding>(
-            'signature',
-            'proof',
-            'binding',
-            fromHex(received.tx),
-          );
-        } catch (e) {
-          logger.error({ error: e }, 'Error balancing transaction via wallet');
-          throw e;
-        }
-      },
-    },
-    midnightProvider: {
-      submitTx: async (tx: FinalizedTransaction): Promise<TransactionId> => {
-        await connectedAPI.submitTransaction(toHex(tx.serialize()));
-        const txIdentifiers = tx.identifiers();
-        const txId = txIdentifiers[0];
-        logger.info({ txIdentifiers }, 'Submitted transaction via wallet');
-        return txId;
-      },
-    },
-  };
-};
-
 const getFirstCompatibleWallet = (): InitialAPI | undefined => {
   if (!window.midnight) return undefined;
   return Object.values(window.midnight).find(
@@ -222,7 +276,7 @@ const connectToWallet = (logger: Logger, networkId: string): Promise<ConnectedAP
         with: () =>
           throwError(() => {
             logger.error('Could not find wallet connector API');
-            return new Error('Could not find Midnight Lace wallet. Extension installed?');
+            return new Error('Could not find Midnight 1AM wallet. Extension installed?');
           }),
       }),
       concatMap(async (initialAPI) => {
@@ -236,7 +290,7 @@ const connectToWallet = (logger: Logger, networkId: string): Promise<ConnectedAP
         with: () =>
           throwError(() => {
             logger.error('Wallet connector API has failed to respond');
-            return new Error('Midnight Lace wallet has failed to respond. Extension enabled?');
+            return new Error('Midnight 1AM wallet has failed to respond. Extension enabled?');
           }),
       }),
       catchError((error, apis) =>
