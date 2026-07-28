@@ -78,10 +78,12 @@ export class BrowserDeployedVaultManager implements DeployedVaultAPIProvider {
   readonly #walletStateSubject: BehaviorSubject<WalletConnectionState>;
   #initializedProviders: Promise<CipherGateProviders> | undefined;
   #connectedAPI: ConnectedAPI | undefined;
+  readonly #networkId: NetworkId;
 
   constructor(private readonly logger: Logger) {
     this.#vaultDeploymentsSubject = new BehaviorSubject<Array<BehaviorSubject<VaultDeployment>>>([]);
     this.#walletStateSubject = new BehaviorSubject<WalletConnectionState>({ status: 'disconnected' });
+    this.#networkId = import.meta.env.VITE_NETWORK_ID as NetworkId;
     this.vaultDeployments$ = this.#vaultDeploymentsSubject;
     this.walletState$ = this.#walletStateSubject;
   }
@@ -94,8 +96,7 @@ export class BrowserDeployedVaultManager implements DeployedVaultAPIProvider {
       return;
     }
     this.#walletStateSubject.next({ status: 'connecting' });
-    const networkId = import.meta.env.VITE_NETWORK_ID as NetworkId;
-    connectToWallet(this.logger, networkId).then(
+    connectToWallet(this.logger, this.#networkId).then(
       (connectedAPI) => {
         this.#connectedAPI = connectedAPI;
         this.#walletStateSubject.next({ status: 'connected' });

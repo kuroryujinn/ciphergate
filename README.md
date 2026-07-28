@@ -102,8 +102,8 @@ CipherGate demonstrates that Midnight Network's Compact language and zero-knowle
     │              │                  │
     ▼              ▼                  ▼
 ┌────────┐ ┌────────────┐ ┌────────────────┐
-│Indexer │ │Proof Server│ │  Lace / 1AM    │
-│(GraphQL)│ │(Docker)    │ │  Wallet SDK    │
+│Indexer │ │Proof Server│ │ 1AM / Wallet  │
+│(GraphQL)│ │(Docker)    │ │  SDK           │
 │        │ │            │ │  (balance/submit)│
 └───┬────┘ └─────┬──────┘ └───────┬────────┘
     │            │                │
