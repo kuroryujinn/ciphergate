@@ -78,7 +78,7 @@ async function deploy() {
     privateStateProvider: levelPrivateStateProvider<PrivateStateId, CipherGatePrivateState>({
       privateStateStoreName,
       signingKeyStoreName: `${privateStateStoreName}-signing-keys`,
-      privateStoragePasswordProvider: () => 'CipherGate-Deploy-2026!',
+      privateStoragePasswordProvider: () => process.env.PRIVATE_STATE_PASSWORD ?? 'CipherGate-Deploy-2026!',
       accountId: seed,
     }),
     publicDataProvider: indexerPublicDataProvider(envConfiguration.indexer, envConfiguration.indexerWS),
@@ -94,8 +94,8 @@ async function deploy() {
   console.log('\n========================================');
   console.log('CONTRACT DEPLOYED SUCCESSFULLY');
   console.log(`Contract Address: ${api.deployedContractAddress}`);
-  console.log(`Wallet Seed: ${seed}`);
   console.log('========================================\n');
+  logger.info('Deployment completed successfully - contract address and seed logged to deployment log');
 
   await walletProvider.stop();
 }

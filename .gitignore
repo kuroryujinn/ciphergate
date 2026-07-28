@@ -57,8 +57,10 @@ jspm_packages/
 *.njsproj
 *.sln
 
-# Compact
-managed/
+# Compact compiler output (git-ignored unless already tracked)
+# Do NOT add new managed files here without considering Vercel deployment needs
+/contract/src/managed/ciphergate/compiler/
+/contract/src/managed/ciphergate/contract/*.wasm
 
 .claude
 .midnight-expert

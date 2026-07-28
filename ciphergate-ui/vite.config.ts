@@ -12,13 +12,22 @@ export default defineConfig({
   cacheDir: './.vite',
   build: {
     target: 'esnext',
-    minify: false,
+    minify: true,
+    sourcemap: false,
+    cssCodeSplit: false,
     rollupOptions: {
       output: {
         manualChunks: (id) => {
           // Separate chunk for WASM modules to avoid top-level await issues
           if (id.includes('onchain-runtime-v3')) return 'wasm';
+          // Separate vendor chunk for MUI
+          if (id.includes('node_modules/@mui/')) return 'vendor-mui';
+          // Separate vendor chunk for Midnight SDK
+          if (id.includes('node_modules/@midnight-ntwrk/')) return 'vendor-midnight';
         },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]',
       },
       },
     commonjsOptions: {
@@ -28,6 +37,7 @@ export default defineConfig({
       // Needed for Node.js modules
       ignoreDynamicRequires: true,
     },
+    assetsInlineLimit: 4096,
   },
   plugins: [
     react(),

@@ -75,8 +75,7 @@ async function main() {
   const providers: CipherGateProviders = {
     privateStateProvider: levelPrivateStateProvider<PrivateStateId, CipherGatePrivateState>({
       privateStateStoreName,
-      signingKeyStoreName: `${privateStateStoreName}-signing-keys`,
-      privateStoragePasswordProvider: () => 'CipherGate-Verify-2026!',
+      signingKeyStoreName: `${privateStateStoreName}-signing-keys`,        privateStoragePasswordProvider: () => process.env.PRIVATE_STATE_PASSWORD ?? 'CipherGate-Verify-2026!',
       accountId: genesisSeed,
     }),
     publicDataProvider: indexerPublicDataProvider(envConfiguration.indexer, envConfiguration.indexerWS),
@@ -126,8 +125,7 @@ async function main() {
   const rProviders: CipherGateProviders = {
     privateStateProvider: levelPrivateStateProvider<PrivateStateId, CipherGatePrivateState>({
       privateStateStoreName: recipientStore,
-      signingKeyStoreName: `${recipientStore}-signing-keys`,
-      privateStoragePasswordProvider: () => 'CipherGate-Verify-2026!',
+      signingKeyStoreName: `${recipientStore}-signing-keys`,        privateStoragePasswordProvider: () => process.env.PRIVATE_STATE_PASSWORD ?? 'CipherGate-Verify-2026!',
       accountId: toHex(randomBytes(32)),
     }),
     publicDataProvider: indexerPublicDataProvider(envConfiguration.indexer, envConfiguration.indexerWS),
@@ -166,7 +164,7 @@ async function main() {
       privateStateProvider: levelPrivateStateProvider<PrivateStateId, CipherGatePrivateState>({
         privateStateStoreName: bystanderStore,
         signingKeyStoreName: `${bystanderStore}-signing-keys`,
-        privateStoragePasswordProvider: () => 'CipherGate-Verify-2026!',
+        privateStoragePasswordProvider: () => process.env.PRIVATE_STATE_PASSWORD ?? 'CipherGate-Verify-2026!',
         accountId: toHex(randomBytes(32)),
       }),
       publicDataProvider: indexerPublicDataProvider(envConfiguration.indexer, envConfiguration.indexerWS),

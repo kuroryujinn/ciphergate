@@ -62,7 +62,7 @@ async function main() {
       privateStateProvider: levelPrivateStateProvider<PrivateStateId, CipherGatePrivateState>({
         privateStateStoreName: storeName,
         signingKeyStoreName: `${storeName}-signing-keys`,
-        privateStoragePasswordProvider: () => 'CipherGate-Deploy-2026!',
+        privateStoragePasswordProvider: () => process.env.PRIVATE_STATE_PASSWORD ?? 'CipherGate-Local-2026!',
         accountId: seed,
       }),
       publicDataProvider: indexerPublicDataProvider(envConfig.indexer, envConfig.indexerWS),

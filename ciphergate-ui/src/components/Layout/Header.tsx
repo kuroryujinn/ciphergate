@@ -12,6 +12,9 @@ import {
   Button,
   CircularProgress,
   Fade,
+  Tab,
+  Tabs,
+  Chip,
 } from '@mui/material';
 import LockIcon from '@mui/icons-material/EnhancedEncryptionOutlined';
 import TerminalIcon from '@mui/icons-material/TerminalOutlined';
@@ -19,14 +22,22 @@ import WalletIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import DisconnectIcon from '@mui/icons-material/PowerSettingsNewOutlined';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import RefreshIcon from '@mui/icons-material/RefreshOutlined';
+import SearchIcon from '@mui/icons-material/SearchOutlined';
+import VpnKeyIcon from '@mui/icons-material/VpnKeyOutlined';
 import { useDeployedVaultContext } from '../../hooks';
 import type { WalletConnectionState } from '../../contexts';
+import { colors } from '../../config/theme';
+
+export interface HeaderProps {
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
+}
 
 /**
  * Premium glass-header with animated borders, wallet connection UX,
- * and refined CipherGate branding.
+ * navigation tabs, and refined CipherGate branding.
  */
-export const Header: React.FC = () => {
+export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
   const vaultApiProvider = useDeployedVaultContext();
   const [walletState, setWalletState] = useState<WalletConnectionState>({ status: 'disconnected' });
 
@@ -43,8 +54,71 @@ export const Header: React.FC = () => {
     vaultApiProvider.disconnectWallet();
   };
 
+  const handleRetry = () => {
+    vaultApiProvider.retryConnection();
+  };
+
   const renderWalletBadge = () => {
     switch (walletState.status) {
+      case 'network-ready':
+        return (
+          <Fade in timeout={300}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                px: 1.5,
+                py: 0.5,
+                borderRadius: 6,
+                background: (t) => alpha(t.palette.success.main, 0.08),
+                border: '1px solid',
+                borderColor: (t) => alpha(t.palette.success.main, 0.15),
+              }}
+            >
+              <Box
+                sx={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  bgcolor: 'success.main',
+                  animation: 'pulse-glow 2s ease-in-out infinite',
+                }}
+              />
+              <Typography
+                variant="caption"
+                sx={{
+                  color: 'success.main',
+                  fontWeight: 600,
+                  fontSize: '0.6rem',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Network Ready
+              </Typography>
+              <Tooltip title="Disconnect wallet" arrow placement="bottom">
+                <IconButton
+                  onClick={handleDisconnect}
+                  size="small"
+                  sx={{
+                    ml: 0.5,
+                    color: alpha('#fff', 0.4),
+                    width: 20,
+                    height: 20,
+                    '&:hover': {
+                      color: 'error.main',
+                      bgcolor: alpha('#ef4444', 0.1),
+                    },
+                  }}
+                >
+                  <DisconnectIcon sx={{ fontSize: 14 }} />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Fade>
+        );
+
       case 'connected':
         return (
           <Fade in timeout={300}>
@@ -82,6 +156,11 @@ export const Header: React.FC = () => {
               >
                 Connected
               </Typography>
+              {walletState.error && (
+                <Tooltip title={walletState.error} arrow placement="bottom">
+                  <ErrorOutlineIcon sx={{ fontSize: 12, color: colors.warningAmber }} />
+                </Tooltip>
+              )}
               <Tooltip title="Disconnect wallet" arrow placement="bottom">
                 <IconButton
                   onClick={handleDisconnect}
@@ -100,6 +179,39 @@ export const Header: React.FC = () => {
                   <DisconnectIcon sx={{ fontSize: 14 }} />
                 </IconButton>
               </Tooltip>
+            </Box>
+          </Fade>
+        );
+
+      case 'detecting':
+        return (
+          <Fade in timeout={300}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                px: 1.5,
+                py: 0.5,
+                borderRadius: 6,
+                background: alpha(colors.warningAmber, 0.08),
+                border: '1px solid',
+                borderColor: alpha(colors.warningAmber, 0.15),
+              }}
+            >
+              <CircularProgress size={10} thickness={6} sx={{ color: colors.warningAmber }} />
+              <Typography
+                variant="caption"
+                sx={{
+                  color: colors.warningAmber,
+                  fontWeight: 600,
+                  fontSize: '0.6rem',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Detecting Wallet...
+              </Typography>
             </Box>
           </Fade>
         );
@@ -133,6 +245,59 @@ export const Header: React.FC = () => {
               >
                 Connecting...
               </Typography>
+            </Box>
+          </Fade>
+        );
+
+      case 'connection-lost':
+        return (
+          <Fade in timeout={300}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                px: 1.5,
+                py: 0.5,
+                borderRadius: 6,
+                background: alpha('#ef4444', 0.08),
+                border: '1px solid',
+                borderColor: alpha('#ef4444', 0.15),
+              }}
+            >
+              <ErrorOutlineIcon sx={{ color: '#ef4444', fontSize: 12 }} />
+              <Tooltip title={walletState.error ?? 'Connection lost'} arrow placement="bottom">
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: '#ef4444',
+                    fontWeight: 600,
+                    fontSize: '0.6rem',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    cursor: 'help',
+                  }}
+                >
+                  Connection Lost
+                </Typography>
+              </Tooltip>
+              <Tooltip title="Retry connection" arrow placement="bottom">
+                <IconButton
+                  onClick={handleRetry}
+                  size="small"
+                  sx={{
+                    color: alpha('#fff', 0.4),
+                    width: 20,
+                    height: 20,
+                    '&:hover': {
+                      color: 'primary.main',
+                      bgcolor: (t) => alpha(t.palette.primary.main, 0.1),
+                    },
+                  }}
+                >
+                  <RefreshIcon sx={{ fontSize: 14 }} />
+                </IconButton>
+              </Tooltip>
             </Box>
           </Fade>
         );
@@ -292,7 +457,7 @@ export const Header: React.FC = () => {
         </Box>
 
         {/* Wordmark */}
-        <Box>
+        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
           <Typography
             variant="h6"
             sx={{
@@ -322,8 +487,61 @@ export const Header: React.FC = () => {
           </Typography>
         </Box>
 
+        {/* Navigation Tabs */}
+        {onTabChange && (
+          <Tabs
+            value={activeTab ?? 'dashboard'}
+            onChange={(_: React.SyntheticEvent, value: string) => onTabChange(value)}
+            sx={{
+              minHeight: 36,
+              '& .MuiTab-root': {
+                minHeight: 36,
+                py: 0.5,
+                px: 1.5,
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                color: alpha('#94a3b8', 0.7),
+                '&.Mui-selected': {
+                  color: colors.cyberTeal,
+                },
+              },
+              '& .MuiTabs-indicator': {
+                backgroundColor: colors.cyberTeal,
+                height: 2,
+              },
+            }}
+          >
+            <Tab label="Vault" value="dashboard" icon={<VpnKeyIcon sx={{ fontSize: 14 }} />} iconPosition="start" />
+            <Tab label="Privacy" value="privacy" icon={<SearchIcon sx={{ fontSize: 14 }} />} iconPosition="start" />
+            <Tab
+              label="Architecture"
+              value="architecture"
+              icon={<TerminalIcon sx={{ fontSize: 14 }} />}
+              iconPosition="start"
+            />
+            <Tab label="Status" value="deployment" icon={<RefreshIcon sx={{ fontSize: 14 }} />} iconPosition="start" />
+          </Tabs>
+        )}
+
         {/* Spacer */}
         <Box sx={{ flex: 1 }} />
+
+        {/* Network badge */}
+        {walletState.networkId && (
+          <Chip
+            label={walletState.networkId}
+            size="small"
+            sx={{
+              height: 20,
+              bgcolor: (t) => alpha(t.palette.primary.main, 0.08),
+              color: 'primary.main',
+              border: `1px solid ${alpha('#00d4ff', 0.15)}`,
+              '& .MuiChip-label': { fontSize: '0.55rem', fontWeight: 700, letterSpacing: '0.05em' },
+            }}
+          />
+        )}
 
         {/* Wallet connection area */}
         {renderWalletBadge()}
@@ -333,6 +551,7 @@ export const Header: React.FC = () => {
           sx={{
             color: (t) => alpha(t.palette.primary.main, 0.3),
             fontSize: 18,
+            display: { xs: 'none', md: 'block' },
           }}
         />
       </Box>

@@ -84,7 +84,7 @@ export const TextPromptDialog: React.FC<Readonly<TextPromptDialogProps>> = ({ pr
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
-          inputRef={(input) => input?.focus()}
+          inputRef={(input: HTMLInputElement | null) => input?.focus()}
           data-testid="textprompt-dialog-text-prompt"
           slotProps={{
             htmlInput: {

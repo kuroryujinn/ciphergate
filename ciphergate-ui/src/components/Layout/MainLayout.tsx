@@ -5,18 +5,25 @@ import React from 'react';
 import { Box, alpha } from '@mui/material';
 import { Header } from './Header';
 
+export interface MainLayoutProps extends React.PropsWithChildren {
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
+}
+
 /**
  * Provides layout for the CipherGate application.
  * Features an atmospheric dark background with subtle grid texture.
  */
-export const MainLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
+export const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChange }) => {
   return (
     <Box
       sx={{
         minHeight: '100vh',
         overflow: 'hidden',
         position: 'relative',
-        background: (t) => `radial-gradient(ellipse at 20% 50%, ${alpha(t.palette.primary.main, 0.03)} 0%, transparent 60%),
+        background: (
+          t,
+        ) => `radial-gradient(ellipse at 20% 50%, ${alpha(t.palette.primary.main, 0.03)} 0%, transparent 60%),
                             radial-gradient(ellipse at 80% 20%, ${alpha(t.palette.secondary.main, 0.04)} 0%, transparent 50%),
                             radial-gradient(ellipse at 50% 80%, ${alpha(t.palette.primary.main, 0.02)} 0%, transparent 50%),
                             ${t.palette.background.default}`,
@@ -37,7 +44,7 @@ export const MainLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
         }}
       />
 
-      <Header />
+      <Header activeTab={activeTab} onTabChange={onTabChange} />
 
       <Box
         component="main"

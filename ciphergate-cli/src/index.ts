@@ -279,7 +279,7 @@ export const run = async (config: Config, testEnv: TestEnvironment, logger: Logg
         privateStateStoreName: config.privateStateStoreName,
         signingKeyStoreName: `${config.privateStateStoreName}-signing-keys`,
         privateStoragePasswordProvider: () => {
-          return 'CipherGate-Test-2026!';
+          return process.env.PRIVATE_STATE_PASSWORD ?? 'CipherGate-Test-2026!';
         },
         accountId: seed,
       }),

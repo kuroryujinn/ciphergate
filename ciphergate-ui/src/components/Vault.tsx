@@ -20,6 +20,11 @@ import {
   Tooltip,
   Zoom,
   Fade,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -37,6 +42,7 @@ import { type VaultDeployment } from '../contexts';
 import { type Observable } from 'rxjs';
 import { State } from '../../../contract/src/index';
 import { EmptyVaultCardContent } from './Vault.EmptyCardContent';
+import { CircuitExecutionStatus, useCircuitExecutionState } from './CircuitExecutionStatus';
 import { colors } from '../config/theme';
 
 export interface VaultProps {
@@ -55,6 +61,9 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
   const [accessResult, setAccessResult] = useState<string>();
   const [isWorking, setIsWorking] = useState(!!vaultDeployment$);
   const [copied, setCopied] = useState(false);
+  const [showConfirmRevoke, setShowConfirmRevoke] = useState(false);
+  const [showExecStatus, setShowExecStatus] = useState<string | undefined>();
+  const { executionState, startExecution, resetExecution } = useCircuitExecutionState();
 
   const onCreateVault = useCallback(() => vaultApiProvider.resolve(), [vaultApiProvider]);
   const onJoinVault = useCallback(
@@ -62,58 +71,64 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
     [vaultApiProvider],
   );
 
+  const withCircuitStatus = async (circuitName: string, operation: () => Promise<void>) => {
+    setShowExecStatus(circuitName);
+    const cleanup = startExecution(circuitName);
+    setIsWorking(true);
+    try {
+      await operation();
+      setIsWorking(false);
+      cleanup();
+      resetExecution();
+      setShowExecStatus(undefined);
+    } catch (error: unknown) {
+      setIsWorking(false);
+      cleanup();
+      setErrorMessage(error instanceof Error ? error.message : String(error));
+    }
+  };
+
   const onUploadVault = useCallback(async () => {
     if (!payloadPrompt || !deployedVaultAPI) return;
-    try {
-      setIsWorking(true);
+    await withCircuitStatus('uploadVault', async () => {
       await deployedVaultAPI.uploadVault(payloadPrompt);
       setPayloadPrompt('');
-    } catch (error: unknown) {
-      setErrorMessage(error instanceof Error ? error.message : String(error));
-    } finally {
-      setIsWorking(false);
-    }
-  }, [deployedVaultAPI, payloadPrompt]);
+    });
+  }, [deployedVaultAPI, payloadPrompt, withCircuitStatus]);
 
   const onShareVault = useCallback(async () => {
     if (!recipientPrompt || !sharingKeyPrompt || !deployedVaultAPI) return;
-    try {
-      setIsWorking(true);
+    await withCircuitStatus('shareVault', async () => {
       await deployedVaultAPI.shareVault(recipientPrompt, sharingKeyPrompt);
       setRecipientPrompt('');
       setSharingKeyPrompt('');
-    } catch (error: unknown) {
-      setErrorMessage(error instanceof Error ? error.message : String(error));
-    } finally {
-      setIsWorking(false);
-    }
-  }, [deployedVaultAPI, recipientPrompt, sharingKeyPrompt]);
+    });
+  }, [deployedVaultAPI, recipientPrompt, sharingKeyPrompt, withCircuitStatus]);
 
   const onAccessVault = useCallback(async () => {
     if (!deployedVaultAPI) return;
-    try {
-      setIsWorking(true);
+    await withCircuitStatus('accessVault', async () => {
       const key = await deployedVaultAPI.accessVault();
       setAccessResult(key);
-    } catch (error: unknown) {
-      setErrorMessage(error instanceof Error ? error.message : String(error));
-    } finally {
-      setIsWorking(false);
-    }
-  }, [deployedVaultAPI]);
+    });
+  }, [deployedVaultAPI, withCircuitStatus]);
 
   const onRevokeVault = useCallback(async () => {
     if (!deployedVaultAPI) return;
-    try {
-      setIsWorking(true);
+    setShowConfirmRevoke(false);
+    await withCircuitStatus('revokeVault', async () => {
       await deployedVaultAPI.revokeVault();
       setAccessResult(undefined);
-    } catch (error: unknown) {
-      setErrorMessage(error instanceof Error ? error.message : String(error));
-    } finally {
-      setIsWorking(false);
-    }
-  }, [deployedVaultAPI]);
+    });
+  }, [deployedVaultAPI, withCircuitStatus]);
+
+  const handleRevokeClick = useCallback(() => {
+    setShowConfirmRevoke(true);
+  }, []);
+
+  const handleCancelRevoke = useCallback(() => {
+    setShowConfirmRevoke(false);
+  }, []);
 
   const onCopyContractAddress = useCallback(async () => {
     if (deployedVaultAPI) {
@@ -158,9 +173,12 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
   const stateAccent = (opacity = 1) => {
     if (!vaultState) return alpha(colors.cyberTeal, 0.3 * opacity);
     switch (vaultState.state) {
-      case State.SHARED: return alpha(colors.cyberTeal, opacity);
-      case State.PRIVATE: return alpha(colors.successGreen, opacity);
-      default: return alpha(colors.warningAmber, opacity);
+      case State.SHARED:
+        return alpha(colors.cyberTeal, opacity);
+      case State.PRIVATE:
+        return alpha(colors.successGreen, opacity);
+      default:
+        return alpha(colors.warningAmber, opacity);
     }
   };
 
@@ -185,8 +203,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
               right: 24,
               height: 2,
               borderRadius: 1,
-              background: (t) =>
-                `linear-gradient(90deg, ${stateAccent(0.4)}, ${stateAccent(0.8)}, ${stateAccent(0.4)})`,
+              background: `linear-gradient(90deg, ${stateAccent(0.4)}, ${stateAccent(0.8)}, ${stateAccent(0.4)})`,
               opacity: 0.8,
             }}
           />
@@ -210,15 +227,26 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
               }}
               open={isWorking}
             >
-              <CircularProgress
-                data-testid="vault-working-indicator"
-                size={32}
-                thickness={3}
-                sx={{ color: 'primary.main' }}
-              />
-              <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 500, letterSpacing: '0.05em' }}>
-                Processing...
-              </Typography>
+              {showExecStatus ? (
+                <Box sx={{ minWidth: 280, maxWidth: 320 }}>
+                  <CircuitExecutionStatus executionState={executionState} />
+                </Box>
+              ) : (
+                <React.Fragment>
+                  <CircularProgress
+                    data-testid="vault-working-indicator"
+                    size={32}
+                    thickness={3}
+                    sx={{ color: 'primary.main' }}
+                  />
+                  <Typography
+                    variant="caption"
+                    sx={{ color: 'primary.main', fontWeight: 500, letterSpacing: '0.05em' }}
+                  >
+                    Processing...
+                  </Typography>
+                </React.Fragment>
+              )}
             </Backdrop>
 
             {/* Error overlay */}
@@ -397,7 +425,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                         px: 1.5,
                         py: 1,
                         borderRadius: 1.5,
-                        bgcolor: (t) => alpha('#000', 0.25),
+                        bgcolor: alpha('#000', 0.25),
                         border: '1px solid',
                         borderColor: (t) => alpha(t.palette.divider, 0.5),
                         mb: 1.5,
@@ -550,7 +578,8 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                           size="small"
                           sx={{
                             color: colors.cyberTeal,
-                            bgcolor: (t) => (payloadPrompt?.length ? alpha(t.palette.primary.main, 0.08) : 'transparent'),
+                            bgcolor: (t) =>
+                              payloadPrompt?.length ? alpha(t.palette.primary.main, 0.08) : 'transparent',
                             '&:hover': { bgcolor: (t) => alpha(t.palette.primary.main, 0.15) },
                             '&.Mui-disabled': { opacity: 0.2 },
                           }}
@@ -609,11 +638,12 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                         <IconButton
                           data-testid="vault-revoke-btn"
                           disabled={vaultState.state === State.PRIVATE}
-                          onClick={onRevokeVault}
+                          onClick={handleRevokeClick}
                           size="small"
                           sx={{
                             color: colors.errorRed,
-                            bgcolor: (t) => (vaultState.state === State.SHARED ? alpha(t.palette.error.main, 0.08) : 'transparent'),
+                            bgcolor: (t) =>
+                              vaultState.state === State.SHARED ? alpha(t.palette.error.main, 0.08) : 'transparent',
                             '&:hover': { bgcolor: (t) => alpha(t.palette.error.main, 0.15) },
                             '&.Mui-disabled': { opacity: 0.2 },
                           }}
@@ -630,6 +660,64 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
             </CardActions>
           </React.Fragment>
         )}
+
+        {/* Revoke Confirmation Dialog */}
+        <Dialog
+          open={showConfirmRevoke}
+          onClose={handleCancelRevoke}
+          maxWidth="xs"
+          slotProps={{
+            transition: { timeout: 300 },
+            paper: {
+              sx: {
+                borderRadius: 3,
+                backgroundImage: `linear-gradient(135deg, ${alpha('#12162a', 0.95)} 0%, ${alpha('#0a0e27', 0.98)} 100%)`,
+                backdropFilter: 'blur(24px)',
+                border: `1px solid ${alpha(colors.errorRed, 0.15)}`,
+                boxShadow: `0 24px 80px ${alpha('#000', 0.6)}`,
+              },
+            },
+          }}
+        >
+          <DialogTitle sx={{ pb: 0.5 }}>
+            <Typography variant="body1" sx={{ color: colors.errorRed, fontWeight: 600, fontSize: '0.9375rem' }}>
+              Confirm Revoke Access
+            </Typography>
+          </DialogTitle>
+          <DialogContent sx={{ pt: 2 }}>
+            <Typography variant="body2" sx={{ color: '#94a3b8', fontSize: '0.8125rem', lineHeight: 1.6 }}>
+              This will clear the recipient and encrypted sharing key from the vault, returning it to the PRIVATE state.
+              The recipient will no longer be able to access the vault. This action cannot be undone.
+            </Typography>
+          </DialogContent>
+          <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
+            <Button
+              variant="outlined"
+              disableElevation
+              onClick={handleCancelRevoke}
+              sx={{
+                color: '#94a3b8',
+                borderColor: alpha('#94a3b8', 0.2),
+                '&:hover': { borderColor: alpha('#94a3b8', 0.4), bgcolor: alpha('#94a3b8', 0.04) },
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              disableElevation
+              onClick={onRevokeVault}
+              sx={{
+                bgcolor: colors.errorRed,
+                color: '#fff',
+                fontWeight: 700,
+                '&:hover': { bgcolor: alpha(colors.errorRed, 0.85) },
+              }}
+            >
+              Confirm Revoke
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Card>
     </Fade>
   );
@@ -641,5 +729,3 @@ const toShortFormatContractAddress = (contractAddress: ContractAddress | undefin
       0x{contractAddress?.replace(/^[A-Fa-f0-9]{6}([A-Fa-f0-9]{8}).*([A-Fa-f0-9]{8})$/g, '$1...$2')}
     </span>
   ) : undefined;
-
-

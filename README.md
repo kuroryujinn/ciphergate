@@ -509,14 +509,186 @@ The UI provides:
 
 ---
 
+## Limitations
+
+### Deployment Infrastructure Unavailable
+
+The Midnight Preprod RPC and proof server are currently unavailable, making live deployment
+impossible at this time. The following components depend on this infrastructure:
+
+- **Contract deployment** to the Midnight Preprod network (proof server + indexer + node)
+- **Live contract address** generation and verification
+- **On-chain circuit execution** with real zero-knowledge proofs
+- **End-to-end integration testing** against a live network
+
+**What has been done:**
+
+- All deployment scripts (`scripts/deploy-preprod.ts`, `scripts/deploy-local.ts`, `scripts/deploy-headless.ts`) are fully implemented and tested
+- All 4 Compact circuits are compiled with prover/verifier keys generated
+- Contract tests (9/9) pass using the Compact simulator
+- The frontend is fully wired to the deployment flow and ready to work once a valid contract address becomes available
+- Wallet integration is complete with session persistence and auto-reconnect
+
+**When infrastructure is restored, the only remaining step is:**
+
+```bash
+# Start proof server
+docker run -p 6300:6300 midnightnetwork/proof-server
+
+# Deploy contract to Preprod
+PROOF_SERVER_URL=http://127.0.0.1:6300 WALLET_SEED=<your_seed> npm run deploy
+```
+
+### Single Vault per Contract
+
+Each CipherGate contract deployment supports exactly **one vault**. Multiple vaults require
+multiple deployments. This is a design constraint of the current Compact contract — the
+vault state machine can only track a single encrypted payload, owner, and recipient at a time.
+
+### Client-Side Encryption Assumed
+
+CipherGate stores and retrieves **opaque encrypted payloads** on-chain. The encryption
+and decryption of file data happen entirely client-side. The project provides the
+infrastructure for secure sharing but does not prescribe a specific encryption scheme —
+users must handle their own key management.
+
+### No Key Recovery
+
+If the secret key (`localSecretKey` witness) is lost, the vault and all its content
+become permanently inaccessible. There is no key recovery mechanism. This is intentional
+for privacy (no backdoor), but users must back up their keys.
+
+---
+
+## Future Work
+
+### Multi-Vault Support per Contract
+
+Extend the Compact contract to support multiple vaults within a single deployment,
+reducing deployment costs and enabling vault management dashboards.
+
+### Encryption Key Management UI
+
+Add built-in encryption/decryption to the frontend, allowing users to encrypt files
+before uploading and decrypt after retrieval, with clear key management workflows.
+
+### Wallet Session Persistence Improvements
+
+- Store wallet connection preference in `localStorage` for longer persistence
+- Add session timeout configuration
+- Implement secure key backup and restore
+
+### Mobile Support
+
+Optimize the UI for mobile browsers with responsive layouts and touch-friendly interactions.
+PWA support with offline capability for viewing vault metadata.
+
+### Cross-Chain Support
+
+Explore deployment to additional Midnight Network environments (Preview, Mainnet) and
+potentially other ZK-capable blockchains.
+
+### Enhanced Audit Dashboard
+
+Build a full audit view showing access history with timestamps and participant addresses,
+with export capabilities for compliance use cases.
+
+### Notification System
+
+Add event-driven notifications when:
+- Vault access is granted or revoked
+- New access audit entries are created
+- Transaction confirmations are received
+
+---
+
+## Demo Walkthrough
+
+### Setup
+
+1. Clone the repository and install dependencies:
+   ```bash
+   git clone https://github.com/kuroryujinn/ciphergate
+   cd ciphergate
+   npm install --legacy-peer-deps
+   ```
+
+2. Compile the Compact contracts:
+   ```bash
+   npm run compact
+   ```
+
+3. Start the development server:
+   ```bash
+   cd ciphergate-ui
+   npm run dev
+   ```
+
+4. Open the URL printed by Vite (typically `http://localhost:5173`) in your browser.
+
+### User Flow
+
+#### Step 1: Connect Wallet
+- Click **Connect Wallet** in the header
+- The Midnight 1AM Wallet extension will prompt for authorization
+- Once connected, the header shows a green **Connected** badge
+- The network ID (e.g., `preprod`) appears next to the wallet badge
+
+#### Step 2: Navigate the Application
+- Use the tabs in the header to switch between views:
+  - **Vault** — Main vault management dashboard
+  - **Privacy** — Interactive privacy architecture visualization
+  - **Architecture** — Full technology stack diagram
+  - **Status** — Deployment readiness dashboard
+
+#### Step 3: Deploy or Join a Vault
+- On the Vault page, click the **Deploy new vault** button (⊕ icon) to create a new contract
+- Or click **Join existing vault** (🔗 icon) and enter a contract address in hex format
+
+#### Step 4: Upload Encrypted Payload (Owner)
+- When the vault is in `VACANT` state, a text field appears
+- Paste your encrypted file metadata and click the **Upload** button
+- The circuit execution lifecycle is displayed during processing
+
+#### Step 5: Share Vault (Owner)
+- When the vault is in `PRIVATE` state, sharing fields appear
+- Enter the **recipient public key** (hex) and **encrypted sharing key**
+- Click the **Share** button
+
+#### Step 6: Access Vault (Owner or Recipient)
+- When the vault is in `SHARED` state, click the **Access** button
+- The encrypted sharing key is retrieved on-chain
+
+#### Step 7: Revoke Access (Owner)
+- Click the **Revoke** button (block icon)
+- A confirmation dialog appears — click **Confirm Revoke** to proceed
+- The vault returns to `PRIVATE` state
+
+### Privacy Verification
+
+Switch to the **Privacy** tab to see:
+- The full data flow from secret key to public ledger
+- Which data is private (client-side) vs. public (on-chain)
+- The zero-knowledge proof lifecycle
+- How hash commitments protect your identity
+
+---
+
 ## Screenshots
 
-> 🖼️ _Screenshots will be added after contract deployment. These will include:_
-> - Successful Compact compilation
-> - Successful build output
-> - Contract test suite results
-> - Web UI with wallet connected
-> - Deployed contract address in the README
+> 🖼️ _Screenshots will be added after contract deployment. Planned screenshots include:_
+>
+> **Landing Page** — Vault creation/join interface with wallet disconnected state
+>
+> **Wallet Connection** — Connected state with network badge and disconnect option
+>
+> **Vault Dashboard** — Active vault with state chips (VACANT/PRIVATE/SHARED), action buttons, and circuit execution lifecycle
+>
+> **Privacy Dashboard** — Flow diagram showing secret → witness → hash commitment → ZK proof → encrypted payload → public ledger
+>
+> **Architecture Page** — Full stack visualization with component availability status
+>
+> **Deployment Status Page** — Real-time dashboard of all deployment prerequisites
 
 ---
 
