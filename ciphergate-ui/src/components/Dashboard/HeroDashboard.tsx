@@ -164,7 +164,7 @@ export const HeroDashboard: React.FC<HeroDashboardProps> = ({ isLoading, error }
           label="Network"
           value="Midnight Preview"
           icon={<SignalIcon sx={{ fontSize: 12 }} />}
-          accent={palette.accent.info}
+          accent={palette.accent.cyan}
         />
         <OLEDDisplay
           label="Privacy Level"
