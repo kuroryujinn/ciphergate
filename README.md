@@ -35,6 +35,7 @@ A privacy-preserving, zero-knowledge file sharing platform built on the **Midnig
 - [Manual Deployment](#manual-deployment)
 - [CLI Usage](#cli-usage)
 - [Web UI Usage](#web-ui-usage)
+- [Vercel Deploy](#vercel-deploy)
 - [Environment Variables](#environment-variables)
 - [Troubleshooting](#troubleshooting)
 - [Useful Links](#useful-links)
@@ -495,6 +496,46 @@ The UI provides:
 - **Upload, Share, Access, Revoke** operations per vault
 - **Copy contract address** to clipboard
 - Real-time state updates via RxJS
+
+---
+
+## Vercel Deploy
+
+CipherGate is configured for one-click deployment on Vercel via the included [`vercel.json`](vercel.json).
+
+### Deploy Steps
+
+1. Push the repository to GitHub: `https://github.com/kuroryujinn/ciphergate`
+2. Go to **[vercel.com/new](https://vercel.com/new)** and click **Import Git Repository**
+3. Select `kuroryujinn/ciphergate` — `vercel.json` is auto-detected
+4. Configure the **only** required environment variable:
+
+   | Name | Value |
+   |------|-------|
+   | `VITE_NETWORK_ID` | `preprod` |
+
+5. Click **Deploy** — Vercel runs:
+
+   ```
+   npm install --legacy-peer-deps
+   cd ciphergate-ui && vite build --mode preprod
+   cp -r ../contract/src/managed/ciphergate/keys ./dist/keys
+   cp -r ../contract/src/managed/ciphergate/zkir ./dist/zkir
+   ```
+
+6. Open the deployed URL — the app loads as a fully static SPA.
+
+### What's Included in the Build
+
+- All 4 Compiled Compact circuits (prover + verifier keys)
+- ZKIR circuit artifacts
+- React SPA with MUI 9, Midnight SDK
+- Health check at `window.__CIPHERGATE_HEALTH__` (browser console)
+- Deployment Status dashboard (Status tab in-app)
+
+### Contract Deployment (Separate Step)
+
+The Vercel deployment serves the frontend only. Contract deployment to the Midnight network requires the proof server and funded wallet — see [Manual Deployment](#manual-deployment) for full instructions.
 
 ---
 
