@@ -1,0 +1,46 @@
+#!/bin/bash
+# Automated CipherGate standalone deployment script
+# Sends inputs to the CLI with proper timing
+
+cd /home/kuro/midnight/ciphergate/ciphergate-cli
+
+# Use a fifo to keep stdin open
+FIFO=/tmp/ciphergate-input.$$
+mkfifo "$FIFO"
+
+# Start the CLI reading from the fifo
+node --experimental-specifier-resolution=node --loader ts-node/esm src/launcher/standalone.ts < "$FIFO" &
+CLI_PID=$!
+
+# Wait for test environment to start (about 30 seconds)
+sleep 35
+
+# Send "Deploy new vault" option
+echo "1" > "$FIFO"
+sleep 3
+
+# Send encrypted payload
+echo "encrypted:QmTestFile123abc" > "$FIFO"
+sleep 5
+
+# Display ledger state (option 5)
+echo "5" > "$FIFO"
+sleep 3
+
+# Display private state (option 6)
+echo "6" > "$FIFO"
+sleep 3
+
+# Display derived state (option 7)
+echo "7" > "$FIFO"
+sleep 3
+
+# Exit (option 8)
+echo "8" > "$FIFO"
+
+# Wait for CLI to finish
+wait $CLI_PID 2>/dev/null
+CLI_EXIT=$?
+
+rm -f "$FIFO"
+exit $CLI_EXIT

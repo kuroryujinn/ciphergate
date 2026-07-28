@@ -1,277 +1,311 @@
-# Bulletin Board DApp
+# CipherGate — Secure File Sharing & Encryption Platform
 
-This project is built on the [Midnight Network](https://midnight.network/).
+A privacy-preserving, zero-knowledge file sharing platform built on the **Midnight Network**. CipherGate uses zero-knowledge proofs to enable secure file vaults where encrypted payloads and sharing keys are managed on-chain, and only authorized users (owner or designated recipient) can access the vault contents — all without revealing sensitive data to the public ledger.
 
-[![Generic badge](https://img.shields.io/badge/Compact%20Compiler-0.30.0-1abc9c.svg)](https://shields.io/)
-[![Generic badge](https://img.shields.io/badge/TypeScript-5.9.3-blue.svg)](https://shields.io/)
+## Contract Address
 
+| Network | Contract Address |
+|---------|------------------|
+| Preprod | `<YOUR_DEPLOYED_CONTRACT_ADDRESS>` |
 
-> **Use this repo as a template. Do not fork it.**
->  
-> This repository is intended to be used via GitHub’s “Use this template” flow.  
-> Forking this repo is discouraged, as forks are not tracked as independent projects.
+> ⚠️ **This is a placeholder.** Deploy the contract manually (see [Manual Deployment](#manual-deployment)) and replace the address above and anywhere else `<YOUR_DEPLOYED_CONTRACT_ADDRESS>` appears.
 
-A Midnight smart contract example demonstrating a simple one-item bulletin board with zero-knowledge proofs on testnet. Users can post a single message at a time, and only the message author can remove it.
+## Features
 
-## Project Structure
+- **🔐 Encrypted File Vaults** — Upload encrypted file metadata/IPFS references to an on-chain vault. The actual file content never touches the blockchain.
+- **🔑 Zero-Knowledge Access Control** — Only the vault owner or an explicitly authorized recipient can access the vault's sharing key. Authorization is verified via zero-knowledge proofs.
+- **👤 Role-Based Permissions** — Three roles: **Owner** (upload, share, revoke), **Authorized Recipient** (access sharing key), and **Bystander** (view ledger state only).
+- **📋 Immutable Audit Trail** — Every access to a shared vault increments an on-chain counter, providing a transparent, tamper-evident audit log.
+- **🔄 Share & Revoke** — Share vault access with any Midnight wallet public key, and revoke access at any time as the vault owner.
+- **🌐 CLI & Web UI** — Interact with CipherGate via a feature-rich command-line interface or a modern React web application.
+- **🔒 Privacy by Design** — All payloads and sharing keys are stored as opaque strings. The contract never decrypts or inspects file contents — encryption/decryption happens entirely client-side.
+
+## What This Project Does
+
+CipherGate demonstrates how to build a **secure file sharing application** on Midnight using **Compact smart contracts** and **zero-knowledge proofs**. The core workflow:
+
+1. A user deploys a **CipherGate vault** contract
+2. The owner uploads encrypted file metadata (e.g., an IPFS hash or encrypted reference)
+3. The owner authorizes a recipient by publishing an encrypted sharing key
+4. The recipient proves their authorization via a zero-knowledge proof and retrieves the sharing key
+5. Every access is recorded on-chain for auditability
+6. The owner can revoke sharing access at any time
+
+## Privacy Model
+
+### Public (On-Chain) Information
+- Vault state (`VACANT`, `PRIVATE`, or `SHARED`)
+- Owner's public key (derived hash of the secret key)
+- Authorized recipient's public key
+- Encrypted payload (opaque string — content unknown to the chain)
+- Encrypted sharing key (opaque string — content unknown to the chain)
+- Access count (immutable audit counter)
+
+### Private Information
+- User's secret key (never leaves the client)
+- The actual file content (encrypted/decrypted off-chain)
+- The symmetric encryption key used to encrypt the file
+
+### What Users Prove Without Revealing
+- **Owner** proves possession of the secret key corresponding to the owner public key (without revealing the key itself)
+- **Recipient** proves their public key matches the `authorizedRecipient` on the vault (verified via zero-knowledge)
+- Access authorization is verified entirely through zero-knowledge proofs — no passwords or secrets are transmitted
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Smart Contract | [Compact](https://docs.midnight.network/compact/writing) Language |
+| Runtime | Midnight Network (Compact Runtime v0.16) |
+| Frontend | React 19, MUI 9, TypeScript |
+| State Management | RxJS Observables |
+| Build Tooling | Vite 8, TypeScript 5.9 |
+| CLI | Node.js 24, ts-node |
+| Zero-Knowledge Proofs | Midnight Proof Server (Docker) |
+| Wallet Integration | Midnight Lace Wallet / Wallet SDK |
+| Testing | Vitest, Compact Simulator |
+
+## Folder Structure
 
 ```
-bulletin-board/
-├── contract/               # Smart contract in Compact language
-│   └── src/               # Contract source and utilities
-├── api/                   # Methods, classes and types for CLI and UI
-├── bboard-cli/            # Command-line interface
-│   └── src/               # CLI implementation
-└── bboard-ui/             # Web browser interface
-    └── src/               # Web UI implementation
+ciphergate/
+├── contract/                   # Compact smart contract
+│   └── src/
+│       ├── ciphergate.compact  # Main contract source
+│       ├── managed/            # Compiled compact artifacts (auto-generated)
+│       ├── index.ts            # Contract entry point & exports
+│       ├── witnesses.ts        # Private witness definitions
+│       └── test/               # Contract tests & simulator
+├── api/                        # Shared API layer (types, providers, contract API)
+│   └── src/
+│       ├── index.ts            # CipherGateAPI class (deploy, join, upload, share, etc.)
+│       ├── common-types.ts     # Shared types & provider interfaces
+│       └── utils/              # Utility functions
+├── ciphergate-cli/             # Command-line interface
+│   └── src/
+│       ├── index.ts            # CLI entry point & interactive loop
+│       ├── config.ts           # Environment configuration
+│       ├── wallet-utils.ts     # Wallet management utilities
+│       ├── midnight-wallet-provider.ts
+│       └── launcher/           # Network-specific launchers
+├── ciphergate-ui/              # Web user interface
+│   └── src/
+│       ├── App.tsx             # Root React component
+│       ├── main.tsx            # SPA entry point
+│       ├── components/         # React components (Vault, Layout, Dialog)
+│       ├── contexts/           # React context & state management
+│       ├── hooks/              # Custom React hooks
+│       └── config/             # Theme & application config
+├── scripts/
+│   └── deploy-preprod.ts       # Non-interactive deploy script
+├── .github/                    # GitHub CI/CD & issue templates
+└── package.json                # Root workspace configuration
 ```
 
 ## Prerequisites
 
-### 1. Node.js Version Check
-
-You need Node.js:
+### 1. Node.js v22+
 
 ```bash
 node --version
 ```
+Expected: `v22.x.x` or higher.
 
-Expected output: `v24.11.1` or higher. The repository includes an [.nvmrc](./.nvmrc) pinned to `24.11.1`.
-
-If you get a lower version: [Install Node.js LTS](https://nodejs.org/).
-
-### 2. Docker Installation
-
-The [proof server](https://docs.midnight.network/develop/tutorial/using/proof-server) runs in Docker and is required for both CLI and UI to generate zero-knowledge proofs:
+### 2. Docker
 
 ```bash
 docker --version
 ```
+Docker Desktop must be running. Required for the proof server.
 
-Expected output: `Docker version X.X.X`.
-
-If Docker is not found: [Install Docker Desktop](https://docs.docker.com/desktop/). Make sure Docker Desktop is running.
-
-### 3. Lace Wallet Extension (UI Only)
-
-For the web interface, install the official Lace wallet extension on [Chrome Store](https://chromewebstore.google.com/detail/lace/gafhhkghbfjjkeiendhlofajokpaflmk) or the [Edge Store](https://microsoftedge.microsoft.com/addons/detail/lace/efeiemlfnahiidnjglmehaihacglceia) (tested with version 1.36.0).
-
-After installing, set up the Midnight wallet:
-
-1. Create a **new wallet** — Midnight will appear as a network option
-2. Set **Network** to **Preprod**
-3. Set **Proof server** to **Local (http://localhost:6300)** — this must point to your local proof server started via Docker
-4. Click **Enter Wallet**
-5. Fund your wallet with tNIGHT tokens from the [Preprod Faucet](https://midnight-tmnight-preprod.nethermind.dev/)
-6. Go to **Tokens** in the wallet, click **Generate tDUST**, and confirm the transaction — tDUST tokens are required to pay transaction fees on preprod
-
-## Setup Instructions
-
-### Install Project Dependencies
+### 3. Compact Compiler
 
 ```bash
-npm install
+npm install -g @midnight-ntwrk/compact-compiler
+compact --version
+```
+Expected: `0.5.x` or later.
+
+### 4. Midnight Lace Wallet (UI Only)
+
+Install the [Lace Wallet](https://chromewebstore.google.com/detail/lace/gafhhkghbfjjkeiendhlofajokpaflmk) browser extension for web UI access to Midnight.
+
+## Installation
+
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd ciphergate
+
+# Install root dependencies (npm workspaces)
+npm install --legacy-peer-deps
+
+# Install contract dependencies
+cd contract && npm install && cd ..
+
+# Install API dependencies
+cd api && npm install && cd ..
+
+# Install CLI dependencies
+cd ciphergate-cli && npm install && cd ..
 ```
 
-This repository uses npm workspaces. Run installation once from the repository root.
+## Compile
 
-### Compile the Smart Contract
-
-The Compact compiler (`compactc 0.31.0`) generates TypeScript bindings and zero-knowledge circuits from the smart contract source code:
+Compile the Compact smart contract to generate TypeScript bindings and zero-knowledge circuit artifacts:
 
 ```bash
 cd contract
-npm run compact    # Compiles the Compact contract
-npm run build      # Copies compiled files to dist/
+npm run compact
 cd ..
 ```
 
 Expected output:
-
 ```
-> compact
-> compact compile src/bboard.compact ./src/managed/bboard
-
-Compiling 2 circuits:
-  circuit "post" (k=14, rows=10070)
-  circuit "takeDown" (k=14, rows=10087)
-
-> build
-> rm -rf dist && tsc --project tsconfig.build.json && cp -Rf ./src/managed ./dist/managed && cp ./src/bboard.compact ./dist
-
+Compiling 4 circuits:
+  circuit "uploadVault" (...)
+  circuit "shareVault" (...)
+  circuit "accessVault" (...)
+  circuit "revokeVault" (...)
 ```
 
-### Build the CLI Interface
+## Build
 
 ```bash
-cd bboard-cli
+# Build the contract (TypeScript compilation)
+cd contract && npm run build && cd ..
+
+# Build the API layer
+cd api && npm run build && cd ..
+
+# Build the CLI
+cd ciphergate-cli && npm run build && cd ..
+
+# Build the UI
+cd ciphergate-ui && npm run build && cd ..
+```
+
+Or from the workspace root:
+
+```bash
 npm run build
-cd ..
 ```
 
-### Build the UI Interface (Optional)
-
-Only needed if you want to use the web interface:
+## Run Tests
 
 ```bash
-cd bboard-ui
-npm run build
-cd ..
+cd contract
+npm run test
 ```
 
-## Option 1: CLI Interface
+## Manual Deployment
 
-### Start the Proof Server
+**Deployment is intentionally skipped during development.** After building, deploy the contract manually:
 
-The CLI requires a local proof server running in Docker:
+### Prerequisites for Deployment
+
+1. Start the proof server:
+   ```bash
+   docker run -p 6300:6300 midnightnetwork/proof-server
+   ```
+
+2. Fund your wallet with tNIGHT tokens from the [Preprod Faucet](https://midnight-tmnight-preprod.nethermind.dev/)
+
+### Deploy to Preprod
 
 ```bash
-cd bboard-cli
-docker compose -f proof-server-local.yml up -d
+NODE_OPTIONS="--max-old-space-size=12288" npm run deploy -- --network preprod
 ```
 
-This uses `midnightntwrk/proof-server:8.0.3` on `http://127.0.0.1:6300`.
+This will output the contract address. **Save this address.**
 
-### Run the CLI
+### Deploy to Preview
 
 ```bash
-# For preprod network
+NODE_OPTIONS="--max-old-space-size=12288" node --experimental-specifier-resolution=node --loader ts-node/esm scripts/deploy-preprod.ts
+```
+
+> Modify `scripts/deploy-preprod.ts` to target the preview network if needed.
+
+## After Deployment
+
+Once you have the deployed contract address:
+
+1. **Replace the placeholder** in this README: `README.md` → `| Preprod | \`<YOUR_DEPLOYED_CONTRACT_ADDRESS>\` |`
+2. Replace any other instances of `<YOUR_DEPLOYED_CONTRACT_ADDRESS>` throughout the project
+3. Start using the application via CLI or UI
+
+**No additional coding is required.** The application is fully wired to connect to any deployed contract at runtime.
+
+## CLI Usage
+
+```bash
+# Standalone (local test environment)
+cd ciphergate-cli
+npm run standalone
+
+# Preprod network
 npm run preprod-remote
 
-# For preview network
+# Preview network
 npm run preview-remote
 ```
 
-### Using the CLI
+The CLI provides an interactive menu for:
+1. Deploying a new vault contract
+2. Joining an existing vault contract
+3. Uploading encrypted file metadata (owner)
+4. Sharing vault with a recipient (owner)
+5. Accessing/sharing key (owner or recipient)
+6. Revoking access (owner)
+7. Viewing ledger state, private state, and derived state
 
-#### Create a Wallet
-
-1. Choose option `1` to build a fresh wallet
-2. The system will generate a wallet address and seed
-3. **Save both the address and seed** - you'll need them later
-
-Expected output is similar to:
-
-```
-Your wallet seed is: [64-character hex string]
-Using unshielded address: mn_addr_preprod1hdvtst70zfgd8wvh7l8ppp7mcrxnjn56wc5hlxpwflz3fxdykaesrw0ln4 waiting for funds...
-```
-
-#### Fund Your Wallet
-
-Before deploying contracts, you need testnet tokens.
-
-1. Copy your wallet address from the output above
-2. Visit the [faucet](https://midnight-tmnight-preprod.nethermind.dev/)
-3. Paste your address and request funds
-4. Wait for the CLI to detect the funds (takes 2-3 minutes)
-
-Expected output after funding is similar to:
-
-```
-Your NIGHT wallet balance is: 1000000000
-```
-
-#### Deploy Your Contract
-
-1. Choose the contract deployment option
-2. Wait for deployment (takes ~30 seconds)
-3. **Save the contract address** for future use
-
-Expected output:
-
-```
-Deployed bulletin board contract at address: [contract address]
-```
-
-#### Use the Bulletin Board
-
-You can now:
-
-- **Post** a message to the bulletin board
-- **View** the current message
-- **Remove** your message (only if you posted it)
-- **Exit** when done
-
-Each action creates a real transaction on Midnight Testnet using zero-knowledge proofs generated by the proof server.
-
-## Option 2: Web UI Interface
-
-The web interface uses the same proof server and requires additional browser setup.
-
-### Start the Proof Server (if not already running)
-
-If you haven't started the proof server for the CLI, start it now:
+## Web UI Usage
 
 ```bash
-cd bboard-cli
-docker compose -f proof-server-local.yml up -d
-cd ..
-```
-
-Verify it's running:
-
-```bash
-docker ps
-```
-
-### Start the Web Interface
-
-The UI can run against preprod or preview networks:
-
-```bash
-cd bboard-ui
-
-# For preprod network
+cd ciphergate-ui
 npm run build:start
-
-# For preview network
-npm run build:start:preview
 ```
 
-The UI will be available at:
+Then open `http://127.0.0.1:8080` and authorize the Midnight Lace wallet extension.
 
-- http://127.0.0.1:8080
+## Environment Variables
 
-### Browser Setup
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `VITE_NETWORK_ID` | Midnight network ID | `preprod` |
+| `VITE_LOGGING_LEVEL` | Pino logging level | `info` |
+| `PROOF_SERVER_URL` | Proof server endpoint | `http://127.0.0.1:6300` |
+| `WALLET_SEED` | Wallet seed for deployment | Random (auto-generated) |
 
-1. **Open the UI URL** in a browser with Lace wallet extension installed
-2. **Set up Lace wallet** if it's your first time
-3. **Authorize the application** when Lace wallet prompts
-4. Use the bulletin board web interface
+## Screenshots
 
-## Useful Links
+> 🖼️ _Screenshots to be added after deployment._
 
-- Get Testnet tNIGHT on [Preprod Faucet](https://midnight-tmnight-preprod.nethermind.dev/) or [Preview Faucet](https://midnight-tmnight-preview.nethermind.dev/)
-- [Midnight Documentation](https://docs.midnight.network/examples/dapps/bboard) - Complete developer guide
-- [Compatibility Matrix](https://docs.midnight.network/relnotes/support-matrix) - Current supported Midnight component versions
-- [Compact Language Guide](https://docs.midnight.network/compact/writing) - Smart contract language reference
-- Get Lace wallet on the [Chrome Store](https://chromewebstore.google.com/detail/lace/gafhhkghbfjjkeiendhlofajokpaflmk) or the [Edge Store](https://microsoftedge.microsoft.com/addons/detail/lace/efeiemlfnahiidnjglmehaihacglceia)
+## Initial Idea
+
+> 📝 _Fill in the initial project idea or inspiration here._
 
 ## Troubleshooting
 
-| Common Issue                       | Solution                                                                                                  |
-| ---------------------------------- |-----------------------------------------------------------------------------------------------------------|
-| `npm install` fails                | Ensure you're using Node `v24.11.1` or newer. Older Node versions can install with warnings but are not the target runtime |
-| Contract compilation fails         | Ensure the Compact toolchain is installed and run `npm run compact` from `contract/`                      |
-| Network connection timeout         | CLI requires internet connection, restart if connection times out                                         |
-| Token funding takes too long       | Wait 1-2 minutes, funding is automatic in CLI                                                             |
-| "Application not authorized" error | Start proof server: `docker compose -f proof-server-local.yml up -d`                                      |
-| Lace wallet not detected           | Install Lace wallet browser extension and refresh page                                                    |
-| Docker issues                      | Ensure Docker Desktop is running, check `docker --version`                                                |
-| Port 6300 in use                   | Run `docker compose down` then restart services                                                           |
-| Dependencies won't install         | Use Node.js LTS version. For older npm versions, you may need `--legacy-peer-deps`                        |
-| Contract deployment fails          | Verify wallet has sufficient balance and network connection                                               |
+| Issue | Solution |
+|-------|----------|
+| `npm install` fails | Use Node.js v22+. Try `--legacy-peer-deps`. |
+| Contract compilation fails | Ensure `compact` CLI is installed: `npm install -g @midnight-ntwrk/compact-compiler` |
+| Proof server connection error | Run `docker run -p 6300:6300 midnightnetwork/proof-server` |
+| Wallet balance insufficient | Visit the [Preprod Faucet](https://midnight-tmnight-preprod.nethermind.dev/) |
+| Lace wallet not detected | Install the [Lace Extension](https://chromewebstore.google.com/detail/lace/gafhhkghbfjjkeiendhlofajokpaflmk) |
+| Port 6300 already in use | `docker ps` → find and stop the existing proof server container |
+| UI build fails with WASM errors | Ensure `vite-plugin-wasm` and `vite-plugin-top-level-await` are correctly configured |
 
-## Notes
+## Useful Links
 
-- CLI and UI can run simultaneously and share the same proof server
-- Proof server (Docker) is required for both CLI and UI to generate zero-knowledge proofs
-- Contract must be compiled before building CLI or UI
-- Fund your wallet using the testnet faucet before deploying contracts
+- [Midnight Documentation](https://docs.midnight.network/)
+- [Compact Language Guide](https://docs.midnight.network/compact/writing)
+- [Preprod Faucet](https://midnight-tmnight-preprod.nethermind.dev/)
+- [Lace Wallet Extension](https://chromewebstore.google.com/detail/lace/gafhhkghbfjjkeiendhlofajokpaflmk)
+- [Midnight Network](https://midnight.network/)
 
-## Implementation Notes
+## License
 
-- **Transaction fee configuration**  
-  The default `additionalFeeOverhead` value (`500_000_000_000_000_000n`) from `@midnight-ntwrk/testkit-js` is required on the `undeployed` network. Lower values can fail with `BalanceCheckOverspend` on the node side. On remote networks, that overhead requires too much dust, so the CLI overrides it to `1_000n`.
-- CLI private state is stored per contract address, matching the `Midnight.js 4.x` private-state provider model.
+Apache-2.0

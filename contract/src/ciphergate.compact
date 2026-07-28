@@ -1,0 +1,69 @@
+// CipherGate Smart Contract in Compact
+// SPDX-License-Identifier: Apache-2.0
+
+pragma language_version 0.23;
+
+import CompactStandardLibrary;
+
+export enum State {
+  VACANT,
+  PRIVATE,
+  SHARED
+}
+
+export ledger state: State;
+
+export ledger owner: Bytes<32>;
+
+export ledger authorizedRecipient: Bytes<32>;
+
+export ledger encryptedPayload: Maybe<Opaque<"string">>;
+
+export ledger encryptedSharingKey: Maybe<Opaque<"string">>;
+
+export ledger accessCount: Counter;
+
+constructor() {
+  state = State.VACANT;
+  encryptedPayload = none<Opaque<"string">>();
+  encryptedSharingKey = none<Opaque<"string">>();
+  accessCount.increment(0);
+}
+
+witness localSecretKey(): Bytes<32>;
+
+export circuit uploadVault(payload: Opaque<"string">): [] {
+  assert(state == State.VACANT, "Vault already exists");
+  owner = disclose(publicKey(localSecretKey()));
+  encryptedPayload = disclose(some<Opaque<"string">>(payload));
+  state = State.PRIVATE;
+}
+
+export circuit shareVault(recipient: Bytes<32>, encSharingKey: Opaque<"string">): [] {
+  assert(state == State.PRIVATE || state == State.SHARED, "Vault must be initialized first");
+  assert(owner == publicKey(localSecretKey()), "Only vault owner can share");
+  authorizedRecipient = disclose(recipient);
+  encryptedSharingKey = disclose(some<Opaque<"string">>(encSharingKey));
+  state = State.SHARED;
+}
+
+export circuit accessVault(): Opaque<"string"> {
+  assert(state == State.SHARED, "Vault is not currently shared");
+  const isOwner = disclose(publicKey(localSecretKey()) == owner);
+  const isRecipient = disclose(publicKey(localSecretKey()) == authorizedRecipient);
+  assert(isOwner || isRecipient, "Caller is not authorized to access this vault");
+  accessCount.increment(1);
+  return encryptedSharingKey.value;
+}
+
+export circuit revokeVault(): [] {
+  assert(state == State.SHARED || state == State.PRIVATE, "Vault does not exist");
+  assert(owner == publicKey(localSecretKey()), "Only vault owner can revoke access");
+  authorizedRecipient = pad(32, "");
+  encryptedSharingKey = none<Opaque<"string">>();
+  state = State.PRIVATE;
+}
+
+export circuit publicKey(sk: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "ciphergate:pk:"), sk]);
+}

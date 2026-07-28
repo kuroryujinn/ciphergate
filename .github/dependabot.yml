@@ -85,7 +85,7 @@ updates:
           - "@testing-library/*"
 
   - package-ecosystem: "npm"
-    directory: "/bboard-cli"
+    directory: "/ciphergate-cli"
     schedule:
       interval: "weekly"
     cooldown:
@@ -94,7 +94,7 @@ updates:
     labels:
       - 'dependencies'
       - 'npm'
-      - 'counter-cli'
+      - 'ciphergate-cli'
     versioning-strategy: auto
 
     groups:

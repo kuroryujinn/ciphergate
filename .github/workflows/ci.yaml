@@ -53,12 +53,12 @@ jobs:
         run: |
           npm run ci
 
-      - name: Compile bboard-cli
-        working-directory: bboard-cli
+      - name: Compile ciphergate-cli
+        working-directory: ciphergate-cli
         run: |
           npm run ci
 
-      - name: Compile bboard-ui
-        working-directory: bboard-ui
+      - name: Compile ciphergate-ui
+        working-directory: ciphergate-ui
         run: |
           npm run ci

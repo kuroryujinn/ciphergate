@@ -1,99 +1,61 @@
-// This file is part of midnightntwrk/example-bboard.
-// Copyright (C) Midnight Foundation
+// CipherGate API Common Types
 // SPDX-License-Identifier: Apache-2.0
-// Licensed under the Apache License, Version 2.0 (the "License");
-// You may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-/**
- * Bulletin board common types and abstractions.
- *
- * @module
- */
 
 import { type MidnightProviders } from '@midnight-ntwrk/midnight-js-types';
 import { type FoundContract } from '@midnight-ntwrk/midnight-js-contracts';
-import type { State, BBoardPrivateState, Contract, Witnesses } from '../../contract/src/index';
+import type { State, CipherGatePrivateState, Contract, Witnesses } from '../../contract/src/index.js';
 
-export const bboardPrivateStateKey = 'bboardPrivateState';
-export type PrivateStateId = typeof bboardPrivateStateKey;
+export const cipherGatePrivateStateKey = 'cipherGatePrivateState';
+export type PrivateStateId = typeof cipherGatePrivateStateKey;
 
 /**
  * The private states consumed throughout the application.
- *
- * @remarks
- * {@link PrivateStates} can be thought of as a type that describes a schema for all
- * private states for all contracts used in the application. Each key represents
- * the type of private state consumed by a particular type of contract.
- * The key is used by the deployed contract when interacting with a private state provider,
- * and the type (i.e., `typeof PrivateStates[K]`) represents the type of private state
- * expected to be returned.
- *
- * Since there is only one contract type for the bulletin board example, we only define a
- * single key/type in the schema.
- *
- * @public
  */
 export type PrivateStates = {
   /**
-   * Key used to provide the private state for {@link BBoardContract} deployments.
+   * Key used to provide the private state for {@link CipherGateContract} deployments.
    */
-  readonly bboardPrivateState: BBoardPrivateState;
+  readonly cipherGatePrivateState: CipherGatePrivateState;
 };
 
 /**
- * Represents a bulletin board contract and its private state.
- *
- * @public
+ * Represents a CipherGate contract and its private state.
  */
-export type BBoardContract = Contract<BBoardPrivateState, Witnesses<BBoardPrivateState>>;
+export type CipherGateContract = Contract<CipherGatePrivateState, Witnesses<CipherGatePrivateState>>;
 
 /**
- * The keys of the circuits exported from {@link BBoardContract}.
- *
- * @public
+ * The keys of the circuits exported from {@link CipherGateContract}.
  */
-export type BBoardCircuitKeys = Exclude<keyof BBoardContract['impureCircuits'], number | symbol>;
+export type CipherGateCircuitKeys = Exclude<keyof CipherGateContract['impureCircuits'], number | symbol>;
 
 /**
- * The providers required by {@link BBoardContract}.
- *
- * @public
+ * The providers required by {@link CipherGateContract}.
  */
-export type BBoardProviders = MidnightProviders<BBoardCircuitKeys, PrivateStateId, BBoardPrivateState>;
+export type CipherGateProviders = MidnightProviders<CipherGateCircuitKeys, PrivateStateId, CipherGatePrivateState>;
 
 /**
- * A {@link BBoardContract} that has been deployed to the network.
- *
- * @public
+ * A {@link CipherGateContract} that has been deployed to the network.
  */
-export type DeployedBBoardContract = FoundContract<BBoardContract>;
+export type DeployedCipherGateContract = FoundContract<CipherGateContract>;
 
 /**
  * A type that represents the derived combination of public (or ledger), and private state.
  */
-export type BBoardDerivedState = {
+export type CipherGateDerivedState = {
   readonly state: State;
-  readonly sequence: bigint;
-  readonly message: string | undefined;
+  readonly owner: string;
+  readonly authorizedRecipient: string;
+  readonly encryptedPayload: string | undefined;
+  readonly encryptedSharingKey: string | undefined;
+  readonly accessCount: bigint;
 
   /**
-   * A readonly flag that determines if the current message was posted by the current user.
-   *
-   * @remarks
-   * The `owner` property of the public (or ledger) state is the public key of the message owner, while
-   * the `secretKey` property of {@link BBoardPrivateState} is the secret key of the current user. If
-   * `owner` corresponds to the public key derived from `secretKey`, then `isOwner` is `true`.
+   * True if the current user is the owner of the vault.
    */
   readonly isOwner: boolean;
-};
 
-// TODO: for some reason I needed to include "@midnight-ntwrk/wallet-sdk-address-format": "1.0.0-rc.1", should we bump in to rc-2 ?
+  /**
+   * True if the current user is the authorized recipient.
+   */
+  readonly isRecipient: boolean;
+};

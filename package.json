@@ -1,5 +1,5 @@
 {
-  "name": "@midnight-ntwrk/example-bboard",
+  "name": "@ciphergate/root",
   "version": "0.1.0",
   "author": "IOG",
   "license": "MIT",
@@ -10,8 +10,8 @@
   },
   "workspaces": {
     "packages": [
-      "bboard-cli",
-      "bboard-ui",
+      "ciphergate-cli",
+      "ciphergate-ui",
       "api",
       "contract"
     ]
@@ -40,8 +40,12 @@
     "testcontainers": "^12.0.1",
     "ws": "^8.21.0"
   },
+  "scripts": {
+    "compact": "npm run compact --workspace=contract",
+    "build": "npm run compact && npm run build --workspace=contract && npm run build --workspace=ciphergate-cli && npm run build --workspace=ciphergate-ui",
+    "deploy": "NODE_OPTIONS=\"--max-old-space-size=12288\" node --experimental-specifier-resolution=node --loader ts-node/esm scripts/deploy-preprod.ts"
+  },
   "devDependencies": {
-    "@eslint/js": "^9.39.2",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@types/babel__core": "^7.20.5",
     "@types/semver": "^7.7.1",
