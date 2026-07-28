@@ -11,6 +11,3 @@ export const useDeployedVaultContext = (): DeployedVaultAPIProvider => {
   }
   return context;
 };
-
-/** @deprecated Use useDeployedVaultContext */
-export const useDeployedBoardContext = useDeployedVaultContext;

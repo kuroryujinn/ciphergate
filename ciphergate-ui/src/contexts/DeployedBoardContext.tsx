@@ -16,9 +16,3 @@ export const DeployedVaultProvider: React.FC<Readonly<DeployedVaultProviderProps
     {children}
   </DeployedVaultContext.Provider>
 );
-
-/** @deprecated Use DeployedVaultContext */
-export const DeployedBoardContext = DeployedVaultContext;
-
-/** @deprecated Use DeployedVaultProvider */
-export const DeployedBoardProvider = DeployedVaultProvider;

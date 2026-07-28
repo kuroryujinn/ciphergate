@@ -642,5 +642,4 @@ const toShortFormatContractAddress = (contractAddress: ContractAddress | undefin
     </span>
   ) : undefined;
 
-/** @deprecated Use Vault */
-export const Board = Vault;
+
