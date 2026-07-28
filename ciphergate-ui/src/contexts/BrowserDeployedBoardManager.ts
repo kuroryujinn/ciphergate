@@ -161,7 +161,6 @@ export class BrowserDeployedVaultManager implements DeployedVaultAPIProvider {
     if (!connectedAPI) {
       throw new Error('Wallet not connected');
     }
-    const networkId = import.meta.env.VITE_NETWORK_ID as NetworkId;
     const zkConfigPath = window.location.origin;
     const keyMaterialProvider = new FetchZkConfigProvider<CipherGateCircuitKeys>(zkConfigPath, fetch.bind(window));
     const config = await connectedAPI.getConfiguration();
