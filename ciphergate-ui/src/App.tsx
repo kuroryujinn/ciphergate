@@ -3,10 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Box, Fade } from '@mui/material';
-import { MainLayout, Vault } from './components';
-import { PrivacyPage } from './components/PrivacyPage';
-import { ArchitecturePage } from './components/ArchitecturePage';
-import { DeploymentDashboard } from './components/DeploymentDashboard';
+import { MainLayout, Vault, Dashboard, PrivacyPage, ArchitecturePage, DeploymentDashboard } from './components';
 import { useDeployedVaultContext } from './hooks';
 import { type VaultDeployment } from './contexts';
 import { type Observable } from 'rxjs';
@@ -52,28 +49,23 @@ const App: React.FC = () => {
         return <ArchitecturePage />;
       case 'deployment':
         return <DeploymentDashboard />;
+      case 'wallet':
+      case 'contracts':
+      case 'proof-engine':
+      case 'transactions':
+      case 'audit-logs':
+      case 'settings':
+        // Sidebar navigation items all route to main dashboard for now
+        return <Dashboard />;
       default:
-        return (
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, justifyContent: 'center', p: 3 }}>
-            {vaultDeployments.map((vaultDeployment, idx) => (
-              <div data-testid={`vault-${idx}`} key={`vault-${idx}`}>
-                <Vault vaultDeployment$={vaultDeployment} />
-              </div>
-            ))}
-            <div data-testid="vault-start">
-              <Vault />
-            </div>
-          </Box>
-        );
+        return <Dashboard />;
     }
   };
 
   return (
     <Box sx={{ background: '#000', minHeight: '100vh' }}>
       <MainLayout activeTab={activeView} onTabChange={handleTabChange}>
-        <Fade in key={activeView} timeout={300}>
-          <Box sx={{ width: '100%' }}>{renderActiveView()}</Box>
-        </Fade>
+        {renderActiveView()}
       </MainLayout>
     </Box>
   );

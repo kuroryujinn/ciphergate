@@ -6,5 +6,6 @@ export * from './Vault';
 export { PrivacyPage } from './PrivacyPage';
 export { ArchitecturePage } from './ArchitecturePage';
 export { DeploymentDashboard } from './DeploymentDashboard';
-export { CircuitExecutionStatus } from './CircuitExecutionStatus';
+export { CircuitExecutionStatus, useCircuitExecutionState } from './CircuitExecutionStatus';
 export type { CircuitExecutionState, CircuitExecutionStep } from './CircuitExecutionStatus';
+export * from './Dashboard';
