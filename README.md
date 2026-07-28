@@ -4,19 +4,43 @@ A privacy-preserving, zero-knowledge file sharing platform built on the **Midnig
 
 ---
 
+## Live Demo
+
+Deployed frontend (Vercel): **[ciphergate-ruddy.vercel.app](https://ciphergate-ruddy.vercel.app/)**
+
+> ⚠️ The frontend requires the Midnight 1AM Wallet browser extension to interact with the vault.
+
 ## Contract Address
 
 > ⏳ _The contract address will be populated once deployment to Preprod completes. See [Manual Deployment](#manual-deployment)._
 
-| Network | Status |
-|---------|--------|
-| Preprod | Pending deployment |
-| Preview | Pending deployment |
+| Network | Address | Explorer Link |
+|---------|---------|---------------|
+| Preprod | Pending deployment | `—` |
+| Preview | Pending deployment | `—` |
+
+---
+
+## Demo Video
+
+> 🎥 _Demo video coming soon._
+>
+> Planned walkthrough:
+> 1. Wallet connection to Midnight 1AM
+> 2. Vault deployment and encrypted upload
+> 3. Vault sharing with a recipient key
+> 4. Accessing the shared vault (owner & recipient flows)
+> 5. Revoking access and verifying privacy
+>
+> ![Demo Video Placeholder](docs/demo.mp4)
 
 ---
 
 ## Table of Contents
 
+- [Live Demo](#live-demo)
+- [Contract Address](#contract-address)
+- [Demo Video](#demo-video)
 - [Project Inspiration & Product Idea](#project-inspiration--product-idea)
 - [Features](#features)
 - [Architecture](#architecture)
