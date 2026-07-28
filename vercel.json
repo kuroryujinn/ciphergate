@@ -3,7 +3,6 @@
   "buildCommand": "cd ciphergate-ui && npm run build:vercel",
   "outputDirectory": "ciphergate-ui/dist",
   "installCommand": "npm install --legacy-peer-deps",
-  "nodeVersion": "22.x",
   "rewrites": [
     {
       "source": "/((?!api|assets|keys|zkir|icon.png|logo-render.png|midnight-logo.png).*)",
