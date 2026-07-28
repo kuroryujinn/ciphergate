@@ -292,9 +292,15 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                   >
                     {vaultState ? (
                       vaultState.state === State.SHARED ? (
-                        <LockOpenIcon data-testid="vault-shared-icon" sx={{ color: palette.accent.primary, fontSize: 18 }} />
+                        <LockOpenIcon
+                          data-testid="vault-shared-icon"
+                          sx={{ color: palette.accent.primary, fontSize: 18 }}
+                        />
                       ) : (
-                        <LockIcon data-testid="vault-locked-icon" sx={{ color: palette.accent.primary, fontSize: 18 }} />
+                        <LockIcon
+                          data-testid="vault-locked-icon"
+                          sx={{ color: palette.accent.primary, fontSize: 18 }}
+                        />
                       )
                     ) : (
                       <Skeleton variant="circular" width={20} height={20} />

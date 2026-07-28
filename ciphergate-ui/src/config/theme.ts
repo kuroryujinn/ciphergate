@@ -92,8 +92,14 @@ const keyframeDefinitions = {
   },
   '@keyframes buttonPress': {
     '0%': { transform: 'translateY(0)', boxShadow: '0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)' },
-    '50%': { transform: 'translateY(1px)', boxShadow: '0 0px 2px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03)' },
-    '100%': { transform: 'translateY(0)', boxShadow: '0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)' },
+    '50%': {
+      transform: 'translateY(1px)',
+      boxShadow: '0 0px 2px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03)',
+    },
+    '100%': {
+      transform: 'translateY(0)',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)',
+    },
   },
   '@keyframes slideInLeft': {
     from: { opacity: 0, transform: 'translateX(-12px)' },

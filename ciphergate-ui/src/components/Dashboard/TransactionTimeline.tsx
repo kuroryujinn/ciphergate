@@ -69,11 +69,7 @@ const TimelineNode: React.FC<{
 }> = ({ stage, isLast }) => {
   const isActive = stage.isActive;
   const isCompleted = stage.isCompleted;
-  const nodeColor = isCompleted
-    ? palette.led.green
-    : isActive
-      ? palette.led.blue
-      : palette.led.off;
+  const nodeColor = isCompleted ? palette.led.green : isActive ? palette.led.blue : palette.led.off;
 
   return (
     <Box sx={{ display: 'flex', gap: 2, position: 'relative' }}>
@@ -109,11 +105,7 @@ const TimelineNode: React.FC<{
               ? `linear-gradient(135deg, ${alpha(palette.led.blue, 0.12)} 0%, transparent 100%)`
               : alpha('#fff', 0.02),
           border: `1px solid ${
-            isCompleted
-              ? alpha(palette.led.green, 0.2)
-              : isActive
-                ? alpha(palette.led.blue, 0.2)
-                : alpha('#fff', 0.04)
+            isCompleted ? alpha(palette.led.green, 0.2) : isActive ? alpha(palette.led.blue, 0.2) : alpha('#fff', 0.04)
           }`,
           position: 'relative',
           transition: 'all 0.3s ease',
@@ -126,10 +118,7 @@ const TimelineNode: React.FC<{
             height: 8,
             borderRadius: '50%',
             backgroundColor: nodeColor,
-            boxShadow:
-              isActive || isCompleted
-                ? `0 0 4px ${nodeColor}, 0 0 8px ${alpha(nodeColor, 0.3)}`
-                : 'none',
+            boxShadow: isActive || isCompleted ? `0 0 4px ${nodeColor}, 0 0 8px ${alpha(nodeColor, 0.3)}` : 'none',
             animation: isActive ? 'ledPulse 1.5s ease-in-out infinite' : 'none',
             transition: 'all 0.3s ease',
           }}
@@ -152,11 +141,7 @@ const TimelineNode: React.FC<{
               fontFamily: '"JetBrains Mono", monospace',
               fontSize: '0.6875rem',
               fontWeight: isActive ? 700 : 600,
-              color: isCompleted
-                ? palette.accent.success
-                : isActive
-                  ? palette.accent.primary
-                  : palette.text.disabled,
+              color: isCompleted ? palette.accent.success : isActive ? palette.accent.primary : palette.text.disabled,
               letterSpacing: '0.02em',
             }}
           >
@@ -253,11 +238,7 @@ export const TransactionTimeline: React.FC = () => {
       {/* Timeline */}
       <Box sx={{ px: 3, pb: 3 }}>
         {stages.map((stage, index) => (
-          <TimelineNode
-            key={stage.id}
-            stage={stage}
-            isLast={index === stages.length - 1}
-          />
+          <TimelineNode key={stage.id} stage={stage} isLast={index === stages.length - 1} />
         ))}
       </Box>
     </Box>

@@ -42,11 +42,7 @@ interface HardwareSkeletonProps {
   variant?: 'text' | 'rectangular' | 'circular' | 'rounded';
 }
 
-const HardwareSkeleton: React.FC<HardwareSkeletonProps> = ({
-  width = '100%',
-  height = 16,
-  variant = 'rounded',
-}) => (
+const HardwareSkeleton: React.FC<HardwareSkeletonProps> = ({ width = '100%', height = 16, variant = 'rounded' }) => (
   <Skeleton
     variant={variant}
     width={width}

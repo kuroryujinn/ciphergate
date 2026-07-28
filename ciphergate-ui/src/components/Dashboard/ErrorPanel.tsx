@@ -53,8 +53,8 @@ const severityConfig = {
   },
 };
 
-/** 
- * Error panel designed as a physical fault-indicator module — 
+/**
+ * Error panel designed as a physical fault-indicator module —
  * uses LED glow, engraved labels, and metallic hardware styling.
  */
 export const ErrorPanel: React.FC<ErrorPanelProps> = ({
@@ -122,7 +122,8 @@ export const ErrorPanel: React.FC<ErrorPanelProps> = ({
                 borderRadius: '50%',
                 backgroundColor: config.ledColor,
                 boxShadow: `0 0 4px ${config.ledColor}`,
-                animation: severity === 'critical' ? 'ledPulse 0.8s ease-in-out infinite' : 'ledPulse 2s ease-in-out infinite',
+                animation:
+                  severity === 'critical' ? 'ledPulse 0.8s ease-in-out infinite' : 'ledPulse 2s ease-in-out infinite',
               }}
             />
             <Typography

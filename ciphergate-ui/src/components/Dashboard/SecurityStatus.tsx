@@ -106,10 +106,7 @@ export const SecurityStatus: React.FC = () => {
                   px: 1.5,
                   py: 1.25,
                   borderRadius: 1,
-                  background:
-                    item.status === 'active'
-                      ? alpha(cfg.color, 0.04)
-                      : 'transparent',
+                  background: item.status === 'active' ? alpha(cfg.color, 0.04) : 'transparent',
                   transition: 'all 0.2s ease',
                   '&:hover': {
                     background: alpha('#fff', 0.02),
@@ -158,10 +155,7 @@ export const SecurityStatus: React.FC = () => {
                       borderRadius: '50%',
                       backgroundColor: isLit ? cfg.color : palette.led.off,
                       boxShadow: isLit ? `0 0 4px ${cfg.color}` : 'none',
-                      animation:
-                        item.status === 'active'
-                          ? 'ledPulse 1.5s ease-in-out infinite'
-                          : 'none',
+                      animation: item.status === 'active' ? 'ledPulse 1.5s ease-in-out infinite' : 'none',
                       transition: 'all 0.3s ease',
                     }}
                   />

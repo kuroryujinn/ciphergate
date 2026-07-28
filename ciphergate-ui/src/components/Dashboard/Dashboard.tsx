@@ -58,7 +58,9 @@ const DemoControl: React.FC<DemoControlProps> = ({ mode, onChange }) => (
         return (
           <Tooltip
             key={m.id}
-            title={m.id === 'live' ? 'Normal operation' : m.id === 'loading' ? 'Show loading skeletons' : 'Show error states'}
+            title={
+              m.id === 'live' ? 'Normal operation' : m.id === 'loading' ? 'Show loading skeletons' : 'Show error states'
+            }
             arrow
             placement="top"
           >
@@ -136,7 +138,8 @@ export const Dashboard: React.FC = () => {
   // Error configs defined inside component to access setDemoMode
   const simulatedError = {
     title: 'Connection Timeout',
-    message: 'Failed to reach Midnight Preprod RPC endpoint after 3 retries. The network may be temporarily unavailable. Check your connection and try again.',
+    message:
+      'Failed to reach Midnight Preprod RPC endpoint after 3 retries. The network may be temporarily unavailable. Check your connection and try again.',
     severity: 'error' as const,
     retryable: true,
     dismissable: true,
@@ -145,7 +148,8 @@ export const Dashboard: React.FC = () => {
 
   const simulatedCriticalError = {
     title: 'Proof Server Offline',
-    message: 'Zero-knowledge proof server at 127.0.0.1:6300 is not responding. Circuit execution cannot proceed without an active proof server. Start the server with: docker run -p 6300:6300 midnightnetwork/proof-server',
+    message:
+      'Zero-knowledge proof server at 127.0.0.1:6300 is not responding. Circuit execution cannot proceed without an active proof server. Start the server with: docker run -p 6300:6300 midnightnetwork/proof-server',
     severity: 'critical' as const,
     retryable: true,
     dismissable: true,
@@ -209,8 +213,7 @@ export const Dashboard: React.FC = () => {
                   width: 5,
                   height: 5,
                   borderRadius: '50%',
-                  backgroundColor:
-                    bootPhase === 'connecting' ? palette.led.amber : palette.led.blue,
+                  backgroundColor: bootPhase === 'connecting' ? palette.led.amber : palette.led.blue,
                   boxShadow: `0 0 3px ${bootPhase === 'connecting' ? palette.led.amber : palette.led.blue}`,
                   animation: 'ledPulse 1s ease-in-out infinite',
                 }}
@@ -259,9 +262,7 @@ export const Dashboard: React.FC = () => {
         </Box>
 
         {/* Demo controls */}
-        {!isBootLoading && (
-          <DemoControl mode={demoMode} onChange={setDemoMode} />
-        )}
+        {!isBootLoading && <DemoControl mode={demoMode} onChange={setDemoMode} />}
       </Box>
 
       {/* Hero Section — Full Width */}
@@ -329,7 +330,7 @@ export const Dashboard: React.FC = () => {
                 }}
               >
                 <Typography sx={{ fontSize: 12, color: alpha(palette.accent.primary, 0.7), fontWeight: 700 }}>
-                  {"</>"}
+                  {'</>'}
                 </Typography>
               </Box>
               <Typography
@@ -357,91 +358,160 @@ export const Dashboard: React.FC = () => {
                 },
               }}
             >
-              {isDemoError ? (
-                // Error console output
-                [
-                  { time: '14:32:01', level: 'INFO', msg: 'Wallet connected: 0x1a2b...9f8e', color: palette.accent.info },
-                  { time: '14:32:02', level: 'INFO', msg: 'Proof server handshake initiated...', color: palette.accent.info },
-                  { time: '14:32:05', level: 'ERROR', msg: 'Connection refused: port 6300', color: palette.accent.error },
-                  { time: '14:32:06', level: 'WARN', msg: 'Retry attempt 1/3...', color: palette.accent.warning },
-                  { time: '14:32:09', level: 'WARN', msg: 'Retry attempt 2/3...', color: palette.accent.warning },
-                  { time: '14:32:12', level: 'ERROR', msg: 'Max retries exceeded. Circuit execution aborted.', color: palette.accent.error },
-                  { time: '14:32:13', level: 'CRIT', msg: 'System degraded — proof server unavailable', color: palette.accent.error },
-                ].map((line, i) => (
-                  <Typography
-                    key={i}
-                    sx={{
-                      fontFamily: '"JetBrains Mono", monospace',
-                      fontSize: '0.5625rem',
-                      lineHeight: 1.8,
-                      color: alpha('#fff', 0.4),
-                      '& .level': { color: line.color, fontWeight: 600 },
-                      '& .msg': { color: alpha('#fff', 0.65) },
-                    }}
-                  >
-                    <span style={{ color: alpha('#fff', 0.2) }}>{line.time}</span>
-                    {' '}
-                    <span className="level">[{line.level}]</span>
-                    {' '}
-                    <span className="msg">{line.msg}</span>
-                  </Typography>
-                ))
-              ) : isBootLoading || isDemoLoading ? (
-                // Loading console output
-                [
-                  { time: '14:32:01', level: 'INFO', msg: 'Initializing wallet connection...', color: palette.accent.info },
-                  { time: '14:32:02', level: 'INFO', msg: 'Establishing RPC session...', color: palette.accent.info },
-                  { time: '14:32:05', level: 'ZK', msg: 'Loading circuit parameters...', color: palette.accent.primary },
-                  { time: '14:32:08', level: 'INFO', msg: 'Synchronizing proof server state...', color: palette.accent.info },
-                ].map((line, i) => (
-                  <Typography
-                    key={i}
-                    sx={{
-                      fontFamily: '"JetBrains Mono", monospace',
-                      fontSize: '0.5625rem',
-                      lineHeight: 1.8,
-                      color: alpha('#fff', 0.4),
-                      '& .level': { color: line.color, fontWeight: 600 },
-                      '& .msg': { color: alpha('#fff', 0.65) },
-                    }}
-                  >
-                    <span style={{ color: alpha('#fff', 0.2) }}>{line.time}</span>
-                    {' '}
-                    <span className="level">[{line.level}]</span>
-                    {' '}
-                    <span className="msg">{line.msg}</span>
-                  </Typography>
-                ))
-              ) : (
-                // Normal console output
-                [
-                  { time: '14:32:01', level: 'INFO', msg: 'Wallet connected: 0x1a2b...9f8e', color: palette.accent.info },
-                  { time: '14:32:02', level: 'INFO', msg: 'Proof server handshake complete', color: palette.accent.info },
-                  { time: '14:32:05', level: 'ZK', msg: 'uploadVault circuit verified', color: palette.accent.success },
-                  { time: '14:32:08', level: 'ZK', msg: 'shareVault circuit verified', color: palette.accent.success },
-                  { time: '14:32:12', level: 'INFO', msg: 'Access audit logged to ledger', color: palette.accent.info },
-                  { time: '14:32:15', level: 'WARN', msg: 'Proof server: 85% memory utilization', color: palette.accent.warning },
-                  { time: '14:32:18', level: 'INFO', msg: 'All circuits nominal. System secure.', color: palette.accent.success },
-                ].map((line, i) => (
-                  <Typography
-                    key={i}
-                    sx={{
-                      fontFamily: '"JetBrains Mono", monospace',
-                      fontSize: '0.5625rem',
-                      lineHeight: 1.8,
-                      color: alpha('#fff', 0.4),
-                      '& .level': { color: line.color, fontWeight: 600 },
-                      '& .msg': { color: alpha('#fff', 0.65) },
-                    }}
-                  >
-                    <span style={{ color: alpha('#fff', 0.2) }}>{line.time}</span>
-                    {' '}
-                    <span className="level">[{line.level}]</span>
-                    {' '}
-                    <span className="msg">{line.msg}</span>
-                  </Typography>
-                ))
-              )}
+              {isDemoError
+                ? // Error console output
+                  [
+                    {
+                      time: '14:32:01',
+                      level: 'INFO',
+                      msg: 'Wallet connected: 0x1a2b...9f8e',
+                      color: palette.accent.info,
+                    },
+                    {
+                      time: '14:32:02',
+                      level: 'INFO',
+                      msg: 'Proof server handshake initiated...',
+                      color: palette.accent.info,
+                    },
+                    {
+                      time: '14:32:05',
+                      level: 'ERROR',
+                      msg: 'Connection refused: port 6300',
+                      color: palette.accent.error,
+                    },
+                    { time: '14:32:06', level: 'WARN', msg: 'Retry attempt 1/3...', color: palette.accent.warning },
+                    { time: '14:32:09', level: 'WARN', msg: 'Retry attempt 2/3...', color: palette.accent.warning },
+                    {
+                      time: '14:32:12',
+                      level: 'ERROR',
+                      msg: 'Max retries exceeded. Circuit execution aborted.',
+                      color: palette.accent.error,
+                    },
+                    {
+                      time: '14:32:13',
+                      level: 'CRIT',
+                      msg: 'System degraded — proof server unavailable',
+                      color: palette.accent.error,
+                    },
+                  ].map((line, i) => (
+                    <Typography
+                      key={i}
+                      sx={{
+                        fontFamily: '"JetBrains Mono", monospace',
+                        fontSize: '0.5625rem',
+                        lineHeight: 1.8,
+                        color: alpha('#fff', 0.4),
+                        '& .level': { color: line.color, fontWeight: 600 },
+                        '& .msg': { color: alpha('#fff', 0.65) },
+                      }}
+                    >
+                      <span style={{ color: alpha('#fff', 0.2) }}>{line.time}</span>{' '}
+                      <span className="level">[{line.level}]</span> <span className="msg">{line.msg}</span>
+                    </Typography>
+                  ))
+                : isBootLoading || isDemoLoading
+                  ? // Loading console output
+                    [
+                      {
+                        time: '14:32:01',
+                        level: 'INFO',
+                        msg: 'Initializing wallet connection...',
+                        color: palette.accent.info,
+                      },
+                      {
+                        time: '14:32:02',
+                        level: 'INFO',
+                        msg: 'Establishing RPC session...',
+                        color: palette.accent.info,
+                      },
+                      {
+                        time: '14:32:05',
+                        level: 'ZK',
+                        msg: 'Loading circuit parameters...',
+                        color: palette.accent.primary,
+                      },
+                      {
+                        time: '14:32:08',
+                        level: 'INFO',
+                        msg: 'Synchronizing proof server state...',
+                        color: palette.accent.info,
+                      },
+                    ].map((line, i) => (
+                      <Typography
+                        key={i}
+                        sx={{
+                          fontFamily: '"JetBrains Mono", monospace',
+                          fontSize: '0.5625rem',
+                          lineHeight: 1.8,
+                          color: alpha('#fff', 0.4),
+                          '& .level': { color: line.color, fontWeight: 600 },
+                          '& .msg': { color: alpha('#fff', 0.65) },
+                        }}
+                      >
+                        <span style={{ color: alpha('#fff', 0.2) }}>{line.time}</span>{' '}
+                        <span className="level">[{line.level}]</span> <span className="msg">{line.msg}</span>
+                      </Typography>
+                    ))
+                  : // Normal console output
+                    [
+                      {
+                        time: '14:32:01',
+                        level: 'INFO',
+                        msg: 'Wallet connected: 0x1a2b...9f8e',
+                        color: palette.accent.info,
+                      },
+                      {
+                        time: '14:32:02',
+                        level: 'INFO',
+                        msg: 'Proof server handshake complete',
+                        color: palette.accent.info,
+                      },
+                      {
+                        time: '14:32:05',
+                        level: 'ZK',
+                        msg: 'uploadVault circuit verified',
+                        color: palette.accent.success,
+                      },
+                      {
+                        time: '14:32:08',
+                        level: 'ZK',
+                        msg: 'shareVault circuit verified',
+                        color: palette.accent.success,
+                      },
+                      {
+                        time: '14:32:12',
+                        level: 'INFO',
+                        msg: 'Access audit logged to ledger',
+                        color: palette.accent.info,
+                      },
+                      {
+                        time: '14:32:15',
+                        level: 'WARN',
+                        msg: 'Proof server: 85% memory utilization',
+                        color: palette.accent.warning,
+                      },
+                      {
+                        time: '14:32:18',
+                        level: 'INFO',
+                        msg: 'All circuits nominal. System secure.',
+                        color: palette.accent.success,
+                      },
+                    ].map((line, i) => (
+                      <Typography
+                        key={i}
+                        sx={{
+                          fontFamily: '"JetBrains Mono", monospace',
+                          fontSize: '0.5625rem',
+                          lineHeight: 1.8,
+                          color: alpha('#fff', 0.4),
+                          '& .level': { color: line.color, fontWeight: 600 },
+                          '& .msg': { color: alpha('#fff', 0.65) },
+                        }}
+                      >
+                        <span style={{ color: alpha('#fff', 0.2) }}>{line.time}</span>{' '}
+                        <span className="level">[{line.level}]</span> <span className="msg">{line.msg}</span>
+                      </Typography>
+                    ))}
               <Box
                 sx={{
                   display: 'flex',
@@ -466,9 +536,7 @@ export const Dashboard: React.FC = () => {
                   sx={{
                     fontFamily: '"JetBrains Mono", monospace',
                     fontSize: '0.5625rem',
-                    color: isDemoError
-                      ? alpha(palette.accent.error, 0.6)
-                      : alpha(palette.accent.success, 0.6),
+                    color: isDemoError ? alpha(palette.accent.error, 0.6) : alpha(palette.accent.success, 0.6),
                   }}
                 >
                   {isDemoError ? 'DEGRADED' : isBootLoading || isDemoLoading ? 'Initializing...' : 'Monitoring...'}

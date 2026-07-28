@@ -118,9 +118,7 @@ const NavItemComponent: React.FC<{
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
   // Map view names to sidebar IDs
-  const currentNavId = activeTab === 'dashboard' || navItems.some(n => n.id === activeTab)
-    ? activeTab
-    : 'dashboard';
+  const currentNavId = activeTab === 'dashboard' || navItems.some((n) => n.id === activeTab) ? activeTab : 'dashboard';
 
   return (
     <Box
@@ -228,12 +226,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
         }}
       >
         {navItems.map((item) => (
-          <NavItemComponent
-            key={item.id}
-            item={item}
-            isSelected={currentNavId === item.id}
-            onSelect={onTabChange}
-          />
+          <NavItemComponent key={item.id} item={item} isSelected={currentNavId === item.id} onSelect={onTabChange} />
         ))}
       </Box>
 

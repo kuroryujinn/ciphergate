@@ -121,7 +121,11 @@ export const CircuitExecutionStatus: React.FC<CircuitExecutionStatusProps> = ({ 
         sx={{
           p: 1.5,
           borderRadius: 2,
-          background: isBlocked ? alpha(palette.accent.error, 0.04) : isError ? alpha(palette.accent.error, 0.06) : alpha(palette.bg.inset, 0.6),
+          background: isBlocked
+            ? alpha(palette.accent.error, 0.04)
+            : isError
+              ? alpha(palette.accent.error, 0.06)
+              : alpha(palette.bg.inset, 0.6),
           border: `1px solid ${isBlocked || isError ? alpha(palette.accent.error, 0.15) : alpha(palette.accent.primary, 0.1)}`,
         }}
       >
