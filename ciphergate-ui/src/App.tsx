@@ -1,12 +1,9 @@
 // CipherGate Root Application
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useEffect, useState } from 'react';
-import { Box, Fade } from '@mui/material';
-import { MainLayout, Vault, Dashboard, PrivacyPage, ArchitecturePage, DeploymentDashboard } from './components';
-import { useDeployedVaultContext } from './hooks';
-import { type VaultDeployment } from './contexts';
-import { type Observable } from 'rxjs';
+import React, { useState } from 'react';
+import { Box } from '@mui/material';
+import { MainLayout, Dashboard, PrivacyPage, ArchitecturePage, DeploymentDashboard } from './components';
 
 const VIEW_KEY = 'ciphergate-active-view';
 
@@ -27,14 +24,7 @@ const setPersistedView = (view: string): void => {
 };
 
 const App: React.FC = () => {
-  const vaultApiProvider = useDeployedVaultContext();
-  const [vaultDeployments, setVaultDeployments] = useState<Array<Observable<VaultDeployment>>>([]);
   const [activeView, setActiveView] = useState<string>(getPersistedView);
-
-  useEffect(() => {
-    const subscription = vaultApiProvider.vaultDeployments$.subscribe(setVaultDeployments);
-    return () => subscription.unsubscribe();
-  }, [vaultApiProvider]);
 
   const handleTabChange = (tab: string) => {
     setActiveView(tab);

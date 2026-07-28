@@ -6,7 +6,7 @@ import { Box, Typography, alpha } from '@mui/material';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHighOutlined';
 import MemoryIcon from '@mui/icons-material/MemoryOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircleOutlined';
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmptyOutlined';
+
 import { palette, hardwareStyles } from '../../config/theme';
 import { ProofEngineSkeleton } from './LoadingSkeleton';
 import { ErrorPanel } from './ErrorPanel';
@@ -60,11 +60,7 @@ interface EngravedProgressProps {
   color?: string;
 }
 
-const EngravedProgress: React.FC<EngravedProgressProps> = ({
-  value,
-  label,
-  color = palette.accent.primary,
-}) => (
+const EngravedProgress: React.FC<EngravedProgressProps> = ({ value, label, color = palette.accent.primary }) => (
   <Box sx={{ width: '100%' }}>
     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
       <Typography
@@ -159,16 +155,13 @@ export const ProofEngine: React.FC<ProofEngineProps> = ({ isLoading, error }) =>
   }, []);
 
   useEffect(() => {
-    const activeIndex = Math.min(
-      Math.floor((progress / 100) * stages.length),
-      stages.length - 1,
-    );
+    const activeIndex = Math.min(Math.floor((progress / 100) * stages.length), stages.length - 1);
 
     setCurrentStages(
       stages.map((stage, i) => ({
         ...stage,
         status: i < activeIndex ? 'completed' : i === activeIndex && progress > 0 ? 'active' : 'idle',
-      })) as CircuitStage[],
+      })),
     );
   }, [progress]);
 
@@ -254,11 +247,7 @@ export const ProofEngine: React.FC<ProofEngineProps> = ({ isLoading, error }) =>
       <Box sx={{ px: 3, pb: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
         {/* Progress bars */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-          <EngravedProgress
-            value={progress}
-            label="Overall Progress"
-            color={palette.accent.primary}
-          />
+          <EngravedProgress value={progress} label="Overall Progress" color={palette.accent.primary} />
           <EngravedProgress
             value={Math.min(100, progress * 1.1)}
             label="Circuit Throughput"
@@ -316,11 +305,12 @@ export const ProofEngine: React.FC<ProofEngineProps> = ({ isLoading, error }) =>
                     height: 6,
                     borderRadius: '50%',
                     backgroundColor: colors.dot,
-                    boxShadow: stage.status === 'active'
-                      ? `0 0 4px ${palette.led.blue}`
-                      : stage.status === 'completed'
-                        ? `0 0 4px ${palette.led.green}`
-                        : 'none',
+                    boxShadow:
+                      stage.status === 'active'
+                        ? `0 0 4px ${palette.led.blue}`
+                        : stage.status === 'completed'
+                          ? `0 0 4px ${palette.led.green}`
+                          : 'none',
                     animation: stage.status === 'active' ? 'ledPulse 1.5s ease-in-out infinite' : 'none',
                     flexShrink: 0,
                   }}
@@ -375,9 +365,7 @@ export const ProofEngine: React.FC<ProofEngineProps> = ({ isLoading, error }) =>
               color: palette.accent.primary,
             }}
           >
-            {progress < 100
-              ? `${Math.max(1, Math.round((100 - progress) / 5))}s remaining`
-              : 'Complete'}
+            {progress < 100 ? `${Math.max(1, Math.round((100 - progress) / 5))}s remaining` : 'Complete'}
           </Typography>
         </Box>
       </Box>

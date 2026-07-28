@@ -5,7 +5,7 @@ import React from 'react';
 import { Box, Typography, alpha, Chip } from '@mui/material';
 import WalletIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import FingerprintIcon from '@mui/icons-material/FingerprintOutlined';
-import SignalIcon from '@mui/icons-material/SignalCellularAltOutlined';
+
 import { palette, hardwareStyles } from '../../config/theme';
 import { WalletCardSkeleton } from './LoadingSkeleton';
 import { ErrorPanel } from './ErrorPanel';
@@ -20,11 +20,7 @@ export interface WalletCardProps {
   error?: ErrorPanelProps | null;
 }
 
-export const WalletCard: React.FC<WalletCardProps> = ({
-  isLoading,
-  error,
-  ...props
-}) => {
+export const WalletCard: React.FC<WalletCardProps> = ({ isLoading, error, ...props }) => {
   if (isLoading) return <WalletCardSkeleton />;
   if (error) return <ErrorPanel {...error} />;
   return <WalletCardInner {...props} />;

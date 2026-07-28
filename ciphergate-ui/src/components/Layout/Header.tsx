@@ -2,18 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Typography,
-  alpha,
-  IconButton,
-  Tooltip,
-  Button,
-  CircularProgress,
-  Fade,
-  Chip,
-  Badge,
-} from '@mui/material';
+import { Box, Typography, alpha, IconButton, Tooltip, Button, CircularProgress, Fade, Badge } from '@mui/material';
 import LockIcon from '@mui/icons-material/EnhancedEncryptionOutlined';
 import TerminalIcon from '@mui/icons-material/TerminalOutlined';
 import WalletIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
@@ -99,7 +88,7 @@ const NetworkBadge: React.FC<{ networkId?: string }> = ({ networkId }) => (
   </Box>
 );
 
-export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
+export const Header: React.FC<HeaderProps> = () => {
   const vaultApiProvider = useDeployedVaultContext();
   const [walletState, setWalletState] = useState<WalletConnectionState>({ status: 'disconnected' });
 

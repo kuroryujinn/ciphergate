@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { Box, Typography, alpha, Tooltip } from '@mui/material';
-import { palette, hardwareStyles } from '../../config/theme';
+import { palette } from '../../config/theme';
 
 interface StatusItem {
   label: string;

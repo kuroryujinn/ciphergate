@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { Box, Typography, alpha, Button, Chip } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/DescriptionOutlined';
 import LockIcon from '@mui/icons-material/LockOutlined';
-import CheckCircleIcon from '@mui/icons-material/CheckCircleOutlined';
+
 import PlayArrowIcon from '@mui/icons-material/PlayArrowOutlined';
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
 import { palette } from '../../config/theme';
