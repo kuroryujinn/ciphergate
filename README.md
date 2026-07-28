@@ -23,8 +23,7 @@ Deployed frontend (Vercel): **[ciphergate-ruddy.vercel.app](https://ciphergate-r
 
 ## Demo Video
 
-> 🎥 _Demo video coming soon._
->
+> 🎥 [![Watch the Demo](demo.mp4)
 > Planned walkthrough:
 > 1. Wallet connection to Midnight 1AM
 > 2. Vault deployment and encrypted upload
