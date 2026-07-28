@@ -1,9 +1,12 @@
-// CipherGate Application Layout
+// CipherGate Main Layout — Cryptographic Workstation
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { Box, alpha } from '@mui/material';
+import { Box, alpha, Fade } from '@mui/material';
 import { Header } from './Header';
+import { Sidebar } from './Sidebar';
+import StatusBar from './StatusBar';
+import { palette } from '../../config/theme';
 
 export interface MainLayoutProps extends React.PropsWithChildren {
   activeTab?: string;
@@ -11,59 +14,67 @@ export interface MainLayoutProps extends React.PropsWithChildren {
 }
 
 /**
- * Provides layout for the CipherGate application.
- * Features an atmospheric dark background with subtle grid texture.
+ * Cryptographic workstation layout:
+ * - Top header bar (control panel)
+ * - Left sidebar (engraved navigation)
+ * - Center workspace (modular hardware rack)
+ * - Bottom status bar (system monitoring)
  */
 export const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChange }) => {
+  const handleTabChange = (tab: string) => {
+    if (onTabChange) {
+      onTabChange(tab);
+    }
+  };
+
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        height: '100vh',
+        width: '100vw',
+        display: 'flex',
+        flexDirection: 'column',
         overflow: 'hidden',
+        background: palette.bg.deepest,
         position: 'relative',
-        background: (
-          t,
-        ) => `radial-gradient(ellipse at 20% 50%, ${alpha(t.palette.primary.main, 0.03)} 0%, transparent 60%),
-                            radial-gradient(ellipse at 80% 20%, ${alpha(t.palette.secondary.main, 0.04)} 0%, transparent 50%),
-                            radial-gradient(ellipse at 50% 80%, ${alpha(t.palette.primary.main, 0.02)} 0%, transparent 50%),
-                            ${t.palette.background.default}`,
       }}
     >
-      {/* Subtle grid overlay */}
-      <Box
-        sx={{
-          position: 'fixed',
-          inset: 0,
-          pointerEvents: 'none',
-          zIndex: 0,
-          opacity: 0.03,
-          backgroundImage: (t) =>
-            `linear-gradient(${alpha(t.palette.primary.main, 0.3)} 1px, transparent 1px),
-             linear-gradient(90deg, ${alpha(t.palette.primary.main, 0.3)} 1px, transparent 1px)`,
-          backgroundSize: '60px 60px',
-        }}
-      />
-
+      {/* Top Header */}
       <Header activeTab={activeTab} onTabChange={onTabChange} />
 
-      <Box
-        component="main"
-        sx={{
-          position: 'relative',
-          zIndex: 1,
-          width: '100%',
-          maxWidth: 1400,
-          mx: 'auto',
-          px: { xs: 2, md: 4 },
-          py: { xs: 4, md: 6 },
-          minHeight: 'calc(100vh - 80px)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-start',
-        }}
-      >
-        {children}
+      {/* Main content area */}
+      <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+        {/* Left Sidebar */}
+        <Sidebar activeTab={activeTab ?? 'dashboard'} onTabChange={handleTabChange} />
+
+        {/* Main Workspace */}
+        <Box
+          component="main"
+          sx={{
+            flex: 1,
+            overflow: 'auto',
+            background: `radial-gradient(ellipse at 30% 40%, ${alpha(palette.accent.primary, 0.015)} 0%, transparent 60%),
+                         radial-gradient(ellipse at 70% 60%, ${alpha(palette.accent.success, 0.008)} 0%, transparent 50%),
+                         ${palette.bg.deepest}`,
+            position: 'relative',
+          }}
+        >
+          <Fade in key={activeTab} timeout={250}>
+            <Box
+              sx={{
+                p: 3,
+                minHeight: '100%',
+                animation: 'slideInUp 0.3s ease-out',
+              }}
+            >
+              {children}
+            </Box>
+          </Fade>
+        </Box>
       </Box>
+
+      {/* Bottom Status Bar */}
+      <StatusBar />
     </Box>
   );
 };
