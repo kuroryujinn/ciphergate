@@ -1,9 +1,8 @@
-// CipherGate Application Header
+// CipherGate Console Header — Hardware Control Panel
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useEffect, useState } from 'react';
 import {
-  AppBar,
   Box,
   Typography,
   alpha,
@@ -12,9 +11,8 @@ import {
   Button,
   CircularProgress,
   Fade,
-  Tab,
-  Tabs,
   Chip,
+  Badge,
 } from '@mui/material';
 import LockIcon from '@mui/icons-material/EnhancedEncryptionOutlined';
 import TerminalIcon from '@mui/icons-material/TerminalOutlined';
@@ -22,21 +20,85 @@ import WalletIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import DisconnectIcon from '@mui/icons-material/PowerSettingsNewOutlined';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import RefreshIcon from '@mui/icons-material/RefreshOutlined';
-import SearchIcon from '@mui/icons-material/SearchOutlined';
-import VpnKeyIcon from '@mui/icons-material/VpnKeyOutlined';
+import NotificationsIcon from '@mui/icons-material/NotificationsOutlined';
+import PersonIcon from '@mui/icons-material/PersonOutlineOutlined';
+import SecurityIcon from '@mui/icons-material/SecurityOutlined';
+import SignalIcon from '@mui/icons-material/SignalCellularAltOutlined';
 import { useDeployedVaultContext } from '../../hooks';
 import type { WalletConnectionState } from '../../contexts';
-import { colors } from '../../config/theme';
+import { palette } from '../../config/theme';
 
 export interface HeaderProps {
   activeTab?: string;
   onTabChange?: (tab: string) => void;
 }
 
-/**
- * Premium glass-header with animated borders, wallet connection UX,
- * navigation tabs, and refined CipherGate branding.
- */
+const SecurityIndicator: React.FC = () => (
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 0.75,
+      px: 1.25,
+      py: 0.5,
+      borderRadius: 1,
+      background: alpha(palette.accent.success, 0.04),
+      border: `1px solid ${alpha(palette.accent.success, 0.1)}`,
+    }}
+  >
+    <Box
+      sx={{
+        width: 6,
+        height: 6,
+        borderRadius: '50%',
+        backgroundColor: palette.led.green,
+        boxShadow: `0 0 4px ${palette.led.green}`,
+        animation: 'ledPulse 2s ease-in-out infinite',
+      }}
+    />
+    <SecurityIcon sx={{ fontSize: 12, color: alpha(palette.accent.success, 0.7) }} />
+    <Typography
+      sx={{
+        fontFamily: '"JetBrains Mono", monospace',
+        fontSize: '0.5625rem',
+        fontWeight: 600,
+        letterSpacing: '0.06em',
+        color: alpha(palette.accent.success, 0.8),
+      }}
+    >
+      SECURED
+    </Typography>
+  </Box>
+);
+
+const NetworkBadge: React.FC<{ networkId?: string }> = ({ networkId }) => (
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 0.75,
+      px: 1.25,
+      py: 0.5,
+      borderRadius: 1,
+      background: alpha(palette.accent.info, 0.04),
+      border: `1px solid ${alpha(palette.accent.info, 0.1)}`,
+    }}
+  >
+    <SignalIcon sx={{ fontSize: 12, color: alpha(palette.accent.info, 0.6) }} />
+    <Typography
+      sx={{
+        fontFamily: '"JetBrains Mono", monospace',
+        fontSize: '0.5625rem',
+        fontWeight: 600,
+        letterSpacing: '0.04em',
+        color: alpha(palette.accent.info, 0.8),
+      }}
+    >
+      {networkId ?? 'Not Connected'}
+    </Typography>
+  </Box>
+);
+
 export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
   const vaultApiProvider = useDeployedVaultContext();
   const [walletState, setWalletState] = useState<WalletConnectionState>({ status: 'disconnected' });
@@ -46,79 +108,13 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
     return () => subscription.unsubscribe();
   }, [vaultApiProvider]);
 
-  const handleConnect = () => {
-    vaultApiProvider.connectWallet();
-  };
-
-  const handleDisconnect = () => {
-    vaultApiProvider.disconnectWallet();
-  };
-
-  const handleRetry = () => {
-    vaultApiProvider.retryConnection();
-  };
+  const handleConnect = () => vaultApiProvider.connectWallet();
+  const handleDisconnect = () => vaultApiProvider.disconnectWallet();
+  const handleRetry = () => vaultApiProvider.retryConnection();
 
   const renderWalletBadge = () => {
     switch (walletState.status) {
       case 'network-ready':
-        return (
-          <Fade in timeout={300}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                px: 1.5,
-                py: 0.5,
-                borderRadius: 6,
-                background: (t) => alpha(t.palette.success.main, 0.08),
-                border: '1px solid',
-                borderColor: (t) => alpha(t.palette.success.main, 0.15),
-              }}
-            >
-              <Box
-                sx={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: '50%',
-                  bgcolor: 'success.main',
-                  animation: 'pulse-glow 2s ease-in-out infinite',
-                }}
-              />
-              <Typography
-                variant="caption"
-                sx={{
-                  color: 'success.main',
-                  fontWeight: 600,
-                  fontSize: '0.6rem',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Network Ready
-              </Typography>
-              <Tooltip title="Disconnect wallet" arrow placement="bottom">
-                <IconButton
-                  onClick={handleDisconnect}
-                  size="small"
-                  sx={{
-                    ml: 0.5,
-                    color: alpha('#fff', 0.4),
-                    width: 20,
-                    height: 20,
-                    '&:hover': {
-                      color: 'error.main',
-                      bgcolor: alpha('#ef4444', 0.1),
-                    },
-                  }}
-                >
-                  <DisconnectIcon sx={{ fontSize: 14 }} />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          </Fade>
-        );
-
       case 'connected':
         return (
           <Fade in timeout={300}>
@@ -126,13 +122,12 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 1,
-                px: 1.5,
+                gap: 0.75,
+                px: 1.25,
                 py: 0.5,
-                borderRadius: 6,
-                background: (t) => alpha(t.palette.success.main, 0.08),
-                border: '1px solid',
-                borderColor: (t) => alpha(t.palette.success.main, 0.15),
+                borderRadius: 1,
+                background: alpha(palette.accent.success, 0.04),
+                border: `1px solid ${alpha(palette.accent.success, 0.1)}`,
               }}
             >
               <Box
@@ -140,43 +135,40 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
                   width: 6,
                   height: 6,
                   borderRadius: '50%',
-                  bgcolor: 'success.main',
-                  animation: 'pulse-glow 2s ease-in-out infinite',
+                  backgroundColor: palette.led.green,
+                  boxShadow: `0 0 4px ${palette.led.green}`,
+                  animation: 'ledPulse 2s ease-in-out infinite',
                 }}
               />
+              <WalletIcon sx={{ fontSize: 12, color: alpha(palette.accent.success, 0.6) }} />
               <Typography
-                variant="caption"
                 sx={{
-                  color: 'success.main',
+                  fontFamily: '"JetBrains Mono", monospace',
+                  fontSize: '0.5625rem',
                   fontWeight: 600,
-                  fontSize: '0.6rem',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  color: alpha(palette.accent.success, 0.8),
                 }}
               >
-                Connected
+                WALLET ACTIVE
               </Typography>
-              {walletState.error && (
-                <Tooltip title={walletState.error} arrow placement="bottom">
-                  <ErrorOutlineIcon sx={{ fontSize: 12, color: colors.warningAmber }} />
+              {walletState.status === 'connected' && walletState.error && (
+                <Tooltip title={walletState.error} arrow>
+                  <ErrorOutlineIcon sx={{ fontSize: 10, color: palette.accent.warning }} />
                 </Tooltip>
               )}
-              <Tooltip title="Disconnect wallet" arrow placement="bottom">
+              <Tooltip title="Disconnect" arrow>
                 <IconButton
                   onClick={handleDisconnect}
                   size="small"
                   sx={{
-                    ml: 0.5,
-                    color: alpha('#fff', 0.4),
-                    width: 20,
-                    height: 20,
-                    '&:hover': {
-                      color: 'error.main',
-                      bgcolor: alpha('#ef4444', 0.1),
-                    },
+                    width: 16,
+                    height: 16,
+                    color: alpha('#fff', 0.3),
+                    '&:hover': { color: palette.accent.error },
                   }}
                 >
-                  <DisconnectIcon sx={{ fontSize: 14 }} />
+                  <DisconnectIcon sx={{ fontSize: 10 }} />
                 </IconButton>
               </Tooltip>
             </Box>
@@ -184,38 +176,6 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
         );
 
       case 'detecting':
-        return (
-          <Fade in timeout={300}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                px: 1.5,
-                py: 0.5,
-                borderRadius: 6,
-                background: alpha(colors.warningAmber, 0.08),
-                border: '1px solid',
-                borderColor: alpha(colors.warningAmber, 0.15),
-              }}
-            >
-              <CircularProgress size={10} thickness={6} sx={{ color: colors.warningAmber }} />
-              <Typography
-                variant="caption"
-                sx={{
-                  color: colors.warningAmber,
-                  fontWeight: 600,
-                  fontSize: '0.6rem',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Detecting Wallet...
-              </Typography>
-            </Box>
-          </Fade>
-        );
-
       case 'connecting':
         return (
           <Fade in timeout={300}>
@@ -223,85 +183,31 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 1,
-                px: 1.5,
+                gap: 0.75,
+                px: 1.25,
                 py: 0.5,
-                borderRadius: 6,
-                background: (t) => alpha(t.palette.warning.main, 0.08),
-                border: '1px solid',
-                borderColor: (t) => alpha(t.palette.warning.main, 0.15),
+                borderRadius: 1,
+                background: alpha(palette.accent.warning, 0.04),
+                border: `1px solid ${alpha(palette.accent.warning, 0.1)}`,
               }}
             >
-              <CircularProgress size={10} thickness={6} sx={{ color: 'warning.main' }} />
+              <CircularProgress size={8} thickness={6} sx={{ color: palette.accent.warning }} />
               <Typography
-                variant="caption"
                 sx={{
-                  color: 'warning.main',
+                  fontFamily: '"JetBrains Mono", monospace',
+                  fontSize: '0.5625rem',
                   fontWeight: 600,
-                  fontSize: '0.6rem',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  color: alpha(palette.accent.warning, 0.8),
                 }}
               >
-                Connecting...
+                {walletState.status === 'detecting' ? 'DETECTING...' : 'CONNECTING...'}
               </Typography>
             </Box>
           </Fade>
         );
 
       case 'connection-lost':
-        return (
-          <Fade in timeout={300}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                px: 1.5,
-                py: 0.5,
-                borderRadius: 6,
-                background: alpha('#ef4444', 0.08),
-                border: '1px solid',
-                borderColor: alpha('#ef4444', 0.15),
-              }}
-            >
-              <ErrorOutlineIcon sx={{ color: '#ef4444', fontSize: 12 }} />
-              <Tooltip title={walletState.error ?? 'Connection lost'} arrow placement="bottom">
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: '#ef4444',
-                    fontWeight: 600,
-                    fontSize: '0.6rem',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    cursor: 'help',
-                  }}
-                >
-                  Connection Lost
-                </Typography>
-              </Tooltip>
-              <Tooltip title="Retry connection" arrow placement="bottom">
-                <IconButton
-                  onClick={handleRetry}
-                  size="small"
-                  sx={{
-                    color: alpha('#fff', 0.4),
-                    width: 20,
-                    height: 20,
-                    '&:hover': {
-                      color: 'primary.main',
-                      bgcolor: (t) => alpha(t.palette.primary.main, 0.1),
-                    },
-                  }}
-                >
-                  <RefreshIcon sx={{ fontSize: 14 }} />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          </Fade>
-        );
-
       case 'error':
         return (
           <Fade in timeout={300}>
@@ -309,81 +215,76 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 1,
-                px: 1.5,
+                gap: 0.75,
+                px: 1.25,
                 py: 0.5,
-                borderRadius: 6,
-                background: (t) => alpha(t.palette.error.main, 0.08),
-                border: '1px solid',
-                borderColor: (t) => alpha(t.palette.error.main, 0.15),
+                borderRadius: 1,
+                background: alpha(palette.accent.error, 0.04),
+                border: `1px solid ${alpha(palette.accent.error, 0.1)}`,
               }}
             >
-              <ErrorOutlineIcon sx={{ color: 'error.main', fontSize: 12 }} />
-              <Tooltip title={walletState.error ?? 'Wallet error'} arrow placement="bottom">
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: 'error.main',
-                    fontWeight: 600,
-                    fontSize: '0.6rem',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    maxWidth: 120,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    cursor: 'help',
-                  }}
-                >
-                  Wallet Error
-                </Typography>
-              </Tooltip>
-              <Tooltip title="Retry connection" arrow placement="bottom">
+              <Box
+                sx={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  backgroundColor: palette.led.red,
+                }}
+              />
+              <ErrorOutlineIcon sx={{ fontSize: 10, color: palette.accent.error }} />
+              <Typography
+                sx={{
+                  fontFamily: '"JetBrains Mono", monospace',
+                  fontSize: '0.5625rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.04em',
+                  color: alpha(palette.accent.error, 0.8),
+                }}
+              >
+                CONNECTION ERROR
+              </Typography>
+              <Tooltip title="Retry" arrow>
                 <IconButton
-                  onClick={handleConnect}
+                  onClick={handleRetry}
                   size="small"
                   sx={{
-                    color: alpha('#fff', 0.4),
-                    width: 20,
-                    height: 20,
-                    '&:hover': {
-                      color: 'primary.main',
-                      bgcolor: (t) => alpha(t.palette.primary.main, 0.1),
-                    },
+                    width: 16,
+                    height: 16,
+                    color: alpha('#fff', 0.3),
+                    '&:hover': { color: palette.accent.primary },
                   }}
                 >
-                  <RefreshIcon sx={{ fontSize: 14 }} />
+                  <RefreshIcon sx={{ fontSize: 10 }} />
                 </IconButton>
               </Tooltip>
             </Box>
           </Fade>
         );
 
-      default: // disconnected
+      default:
         return (
           <Fade in timeout={300}>
             <Button
               onClick={handleConnect}
               size="small"
               variant="outlined"
-              startIcon={<WalletIcon sx={{ fontSize: 14 }} />}
+              startIcon={<WalletIcon sx={{ fontSize: 12 }} />}
               sx={{
-                borderRadius: 6,
-                borderColor: (t) => alpha(t.palette.primary.main, 0.3),
-                color: (t) => alpha(t.palette.primary.main, 0.8),
-                fontSize: '0.6rem',
+                borderRadius: 1,
+                borderColor: alpha('#fff', 0.1),
+                color: palette.text.secondary,
+                fontSize: '0.5625rem',
                 fontWeight: 600,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
                 py: 0.5,
-                px: 1.5,
+                px: 1.25,
                 '&:hover': {
-                  borderColor: 'primary.main',
-                  bgcolor: (t) => alpha(t.palette.primary.main, 0.08),
+                  borderColor: alpha(palette.accent.primary, 0.3),
+                  color: palette.text.primary,
                 },
               }}
             >
-              Connect Wallet
+              CONNECT WALLET
             </Button>
           </Fade>
         );
@@ -391,170 +292,157 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
   };
 
   return (
-    <AppBar
-      position="sticky"
+    <Box
       data-testid="header"
-      elevation={0}
       sx={{
-        mt: 1.5,
-        mx: 'auto',
-        maxWidth: 'calc(100% - 32px)',
-        borderRadius: 3,
-        background: (t) =>
-          `linear-gradient(135deg, ${alpha(t.palette.background.paper, 0.7)} 0%, ${alpha('#0a0e27', 0.85)} 100%)`,
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        border: '1px solid',
-        borderColor: (t) => alpha(t.palette.primary.main, 0.12),
-        boxShadow: (t) => `0 4px 24px ${alpha('#000', 0.4)}, inset 0 1px 0 ${alpha(t.palette.primary.main, 0.08)}`,
-        flexDirection: 'row',
+        display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        transition: 'all 0.3s ease',
-        '&::before': {
+        height: 52,
+        minHeight: 52,
+        px: 2,
+        gap: 2,
+        background: `linear-gradient(180deg, ${alpha(palette.bg.surface, 0.95)} 0%, ${palette.bg.deepest} 100%)`,
+        borderBottom: `1px solid ${alpha('#fff', 0.04)}`,
+        position: 'relative',
+        '&::after': {
           content: '""',
           position: 'absolute',
-          inset: 0,
-          borderRadius: 3,
-          padding: '1px',
-          background: (t) =>
-            `linear-gradient(90deg, transparent 0%, ${alpha(t.palette.primary.main, 0.3)} 50%, transparent 100%)`,
-          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-          WebkitMaskComposite: 'xor',
-          maskComposite: 'exclude',
-          pointerEvents: 'none',
-          animation: 'shimmer 4s ease-in-out infinite',
-          backgroundSize: '200% 100%',
+          bottom: 0,
+          left: 40,
+          right: 40,
+          height: 1,
+          background: `linear-gradient(90deg, transparent, ${alpha('#fff', 0.04)}, transparent)`,
         },
       }}
     >
+      {/* Logo section - simpler in header since sidebar has full branding */}
       <Box
         sx={{
           display: 'flex',
-          px: 3,
-          py: 1.5,
           alignItems: 'center',
-          gap: 2.5,
-          width: '100%',
+          gap: 1.5,
+          minWidth: 180,
         }}
-        data-testid="header-logo"
       >
-        {/* Icon mark */}
+        <Box
+          sx={{
+            width: 22,
+            height: 22,
+            borderRadius: 1,
+            background: `linear-gradient(135deg, ${alpha(palette.accent.primary, 0.12)} 0%, transparent 100%)`,
+            border: `1px solid ${alpha(palette.accent.primary, 0.12)}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <LockIcon sx={{ fontSize: 12, color: alpha(palette.accent.primary, 0.6) }} />
+        </Box>
+        <Typography
+          sx={{
+            fontFamily: '"IBM Plex Sans", sans-serif',
+            fontSize: '0.8125rem',
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            color: palette.text.primary,
+          }}
+        >
+          CIPHERGATE
+        </Typography>
+      </Box>
+
+      {/* Status indicators */}
+      <SecurityIndicator />
+      <NetworkBadge networkId={walletState.networkId} />
+
+      <Box sx={{ flex: 1 }} />
+
+      {/* Wallet controls */}
+      {renderWalletBadge()}
+
+      {/* Notification bell */}
+      <Tooltip title="Notifications" arrow>
+        <IconButton
+          size="small"
+          sx={{
+            width: 28,
+            height: 28,
+            borderRadius: 1,
+            color: palette.text.tertiary,
+            '&:hover': {
+              color: palette.text.secondary,
+              background: alpha('#fff', 0.04),
+            },
+          }}
+        >
+          <Badge
+            overlap="circular"
+            variant="dot"
+            sx={{
+              '& .MuiBadge-dot': {
+                width: 4,
+                height: 4,
+                borderRadius: '50%',
+                backgroundColor: palette.accent.primary,
+              },
+            }}
+          >
+            <NotificationsIcon sx={{ fontSize: 16 }} />
+          </Badge>
+        </IconButton>
+      </Tooltip>
+
+      {/* User profile */}
+      <Tooltip title="Profile" arrow>
         <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            width: 40,
-            height: 40,
-            borderRadius: 2,
-            background: (t) => `linear-gradient(135deg, ${alpha(t.palette.primary.main, 0.15)} 0%, transparent 100%)`,
-            border: '1px solid',
-            borderColor: (t) => alpha(t.palette.primary.main, 0.2),
+            gap: 0.75,
+            px: 1,
+            py: 0.5,
+            borderRadius: 1,
+            cursor: 'pointer',
+            '&:hover': {
+              background: alpha('#fff', 0.03),
+            },
           }}
         >
-          <LockIcon sx={{ color: 'primary.main', fontSize: 22 }} />
-        </Box>
-
-        {/* Wordmark */}
-        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-          <Typography
-            variant="h6"
+          <Box
             sx={{
-              fontWeight: 800,
-              fontSize: '1.15rem',
-              letterSpacing: '0.08em',
-              background: (t) => `linear-gradient(90deg, ${t.palette.primary.main}, #7dd3fc)`,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              lineHeight: 1.2,
+              width: 22,
+              height: 22,
+              borderRadius: '50%',
+              background: `linear-gradient(135deg, ${palette.metal.titanium} 0%, ${palette.metal.obsidian} 100%)`,
+              border: `1px solid ${alpha('#fff', 0.06)}`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            CIPHERGATE
-          </Typography>
+            <PersonIcon sx={{ fontSize: 12, color: palette.text.tertiary }} />
+          </Box>
           <Typography
-            variant="caption"
             sx={{
-              color: 'text.secondary',
-              letterSpacing: '0.12em',
-              fontSize: '0.6rem',
-              textTransform: 'uppercase',
-              display: 'block',
-              mt: 0.2,
+              fontFamily: '"Inter", sans-serif',
+              fontSize: '0.625rem',
+              fontWeight: 500,
+              color: palette.text.tertiary,
             }}
           >
-            Secure File Sharing on Midnight Network
+            Admin
           </Typography>
         </Box>
+      </Tooltip>
 
-        {/* Navigation Tabs */}
-        {onTabChange && (
-          <Tabs
-            value={activeTab ?? 'dashboard'}
-            onChange={(_: React.SyntheticEvent, value: string) => onTabChange(value)}
-            sx={{
-              minHeight: 36,
-              '& .MuiTab-root': {
-                minHeight: 36,
-                py: 0.5,
-                px: 1.5,
-                fontSize: '0.7rem',
-                fontWeight: 600,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-                color: alpha('#94a3b8', 0.7),
-                '&.Mui-selected': {
-                  color: colors.cyberTeal,
-                },
-              },
-              '& .MuiTabs-indicator': {
-                backgroundColor: colors.cyberTeal,
-                height: 2,
-              },
-            }}
-          >
-            <Tab label="Vault" value="dashboard" icon={<VpnKeyIcon sx={{ fontSize: 14 }} />} iconPosition="start" />
-            <Tab label="Privacy" value="privacy" icon={<SearchIcon sx={{ fontSize: 14 }} />} iconPosition="start" />
-            <Tab
-              label="Architecture"
-              value="architecture"
-              icon={<TerminalIcon sx={{ fontSize: 14 }} />}
-              iconPosition="start"
-            />
-            <Tab label="Status" value="deployment" icon={<RefreshIcon sx={{ fontSize: 14 }} />} iconPosition="start" />
-          </Tabs>
-        )}
-
-        {/* Spacer */}
-        <Box sx={{ flex: 1 }} />
-
-        {/* Network badge */}
-        {walletState.networkId && (
-          <Chip
-            label={walletState.networkId}
-            size="small"
-            sx={{
-              height: 20,
-              bgcolor: (t) => alpha(t.palette.primary.main, 0.08),
-              color: 'primary.main',
-              border: `1px solid ${alpha('#00d4ff', 0.15)}`,
-              '& .MuiChip-label': { fontSize: '0.55rem', fontWeight: 700, letterSpacing: '0.05em' },
-            }}
-          />
-        )}
-
-        {/* Wallet connection area */}
-        {renderWalletBadge()}
-
-        {/* Terminal icon for tech aesthetic */}
-        <TerminalIcon
-          sx={{
-            color: (t) => alpha(t.palette.primary.main, 0.3),
-            fontSize: 18,
-            display: { xs: 'none', md: 'block' },
-          }}
-        />
-      </Box>
-    </AppBar>
+      {/* Terminal icon accent */}
+      <TerminalIcon
+        sx={{
+          fontSize: 14,
+          color: alpha('#fff', 0.08),
+          ml: 0.5,
+        }}
+      />
+    </Box>
   );
 };
