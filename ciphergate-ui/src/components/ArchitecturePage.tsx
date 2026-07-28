@@ -160,7 +160,7 @@ export const ArchitecturePage: React.FC = () => {
       title: '4. Circuit Bindings (TypeScript)',
       description:
         'Compiled Compact contracts produce TypeScript bindings with typed circuit calls. Four circuits: uploadVault, shareVault, accessVault, revokeVault.',
-      accent: '#7dd3fc',
+      accent: palette.accent.info,
       available: true,
     },
     {
@@ -168,7 +168,7 @@ export const ArchitecturePage: React.FC = () => {
       title: '5. Compact Circuits (Zero-Knowledge)',
       description:
         'Custom Compact language smart contracts that define the vault state machine and ZK proof logic. Circuits assert authorization without revealing secrets.',
-      accent: palette.accent.info,
+      accent: palette.accent.purple,
       available: true,
     },
     {
@@ -176,7 +176,7 @@ export const ArchitecturePage: React.FC = () => {
       title: '6. Proof Server (Docker)',
       description:
         'Midnight proof server generates zero-knowledge proofs for each circuit call. Required for all contract transactions. Run locally via docker: midnightnetwork/proof-server.',
-      accent: palette.accent.info,
+      accent: palette.accent.purple,
       available: true,
     },
     {
@@ -208,7 +208,7 @@ export const ArchitecturePage: React.FC = () => {
             fontSize: { xs: '1.5rem', md: '2rem' },
             letterSpacing: '-0.02em',
             mb: 1,
-            background: `linear-gradient(135deg, ${palette.accent.primary}, ${palette.accent.info})`,
+            background: `linear-gradient(135deg, ${palette.accent.primary}, ${palette.accent.purple})`,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}

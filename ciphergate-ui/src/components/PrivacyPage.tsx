@@ -155,7 +155,7 @@ export const PrivacyPage: React.FC = () => {
       description:
         'A ZK proof is generated attesting that the caller knows a secret key whose public key matches an authorized on-chain value. The proof server produces this proof without learning the secret key. The blockchain verifies the proof without seeing which key was used.',
       isPrivate: true,
-      accent: palette.accent.info,
+      accent: palette.accent.purple,
     },
     {
       icon: <LockIcon sx={{ fontSize: 20 }} />,
@@ -186,7 +186,7 @@ export const PrivacyPage: React.FC = () => {
             fontSize: { xs: '1.5rem', md: '2rem' },
             letterSpacing: '-0.02em',
             mb: 1,
-            background: `linear-gradient(135deg, ${palette.accent.primary}, ${palette.accent.info})`,
+            background: `linear-gradient(135deg, ${palette.accent.primary}, ${palette.accent.purple})`,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}

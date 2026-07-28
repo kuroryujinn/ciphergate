@@ -19,6 +19,7 @@ const paletteConfig = {
   // Accents
   accent: {
     primary: '#3D7BFF',
+    purple: '#7C3AED',
     success: '#39D98A',
     warning: '#FFB547',
     error: '#FF5B6E',
@@ -55,7 +56,7 @@ export const palette = paletteConfig;
 // Backward-compat alias for files still importing `colors`
 export const colors = {
   cyberTeal: paletteConfig.accent.primary,
-  electricViolet: '#7c3aed',
+  electricViolet: paletteConfig.accent.purple,
   deepNavy: '#0a0e27',
   midnightBlue: '#12162a',
   successGreen: paletteConfig.accent.success,
