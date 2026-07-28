@@ -8,6 +8,9 @@ import MemoryIcon from '@mui/icons-material/MemoryOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircleOutlined';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmptyOutlined';
 import { palette, hardwareStyles } from '../../config/theme';
+import { ProofEngineSkeleton } from './LoadingSkeleton';
+import { ErrorPanel } from './ErrorPanel';
+import type { ErrorPanelProps } from './ErrorPanel';
 
 interface CircuitStage {
   id: string;
@@ -127,7 +130,14 @@ const EngravedProgress: React.FC<EngravedProgressProps> = ({
   </Box>
 );
 
-export const ProofEngine: React.FC = () => {
+export interface ProofEngineProps {
+  isLoading?: boolean;
+  error?: ErrorPanelProps | null;
+}
+
+export const ProofEngine: React.FC<ProofEngineProps> = ({ isLoading, error }) => {
+  if (isLoading) return <ProofEngineSkeleton />;
+  if (error) return <ErrorPanel {...error} />;
   const [progress, setProgress] = useState(0);
   const [currentStages, setCurrentStages] = useState<CircuitStage[]>(stages);
   const [isRunning, setIsRunning] = useState(false);

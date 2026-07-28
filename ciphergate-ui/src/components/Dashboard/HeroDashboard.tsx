@@ -10,6 +10,9 @@ import LockIcon from '@mui/icons-material/LockOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircleOutlined';
 import SignalIcon from '@mui/icons-material/SignalCellularAltOutlined';
 import { palette, hardwareStyles } from '../../config/theme';
+import { HeroDashboardSkeleton } from './LoadingSkeleton';
+import { ErrorPanel } from './ErrorPanel';
+import type { ErrorPanelProps } from './ErrorPanel';
 
 interface OLEDDisplayProps {
   label: string;
@@ -66,7 +69,14 @@ const OLEDDisplay: React.FC<OLEDDisplayProps> = ({ label, value, icon, accent = 
   </Box>
 );
 
-export const HeroDashboard: React.FC = () => {
+export interface HeroDashboardProps {
+  isLoading?: boolean;
+  error?: ErrorPanelProps | null;
+}
+
+export const HeroDashboard: React.FC<HeroDashboardProps> = ({ isLoading, error }) => {
+  if (isLoading) return <HeroDashboardSkeleton />;
+  if (error) return <ErrorPanel {...error} />;
   return (
     <Box
       sx={{

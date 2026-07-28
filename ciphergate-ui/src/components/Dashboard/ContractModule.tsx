@@ -9,6 +9,9 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircleOutlined';
 import PlayArrowIcon from '@mui/icons-material/PlayArrowOutlined';
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
 import { palette } from '../../config/theme';
+import { ContractModuleSkeleton } from './LoadingSkeleton';
+import { ErrorPanel } from './ErrorPanel';
+import type { ErrorPanelProps } from './ErrorPanel';
 
 interface ContractData {
   name: string;
@@ -208,7 +211,14 @@ const BladeCard: React.FC<BladeCardProps> = ({ contract }) => {
   );
 };
 
-export const ContractModule: React.FC = () => {
+export interface ContractModuleProps {
+  isLoading?: boolean;
+  error?: ErrorPanelProps | null;
+}
+
+export const ContractModule: React.FC<ContractModuleProps> = ({ isLoading, error }) => {
+  if (isLoading) return <ContractModuleSkeleton />;
+  if (error) return <ErrorPanel {...error} />;
   return (
     <Box
       sx={{
