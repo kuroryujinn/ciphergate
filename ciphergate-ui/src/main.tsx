@@ -9,7 +9,7 @@ import { ThemeProvider, Box, Typography, alpha } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import App from './App';
-import { theme, colors } from './config/theme';
+import { theme, palette } from './config/theme';
 import '@midnight-ntwrk/dapp-connector-api';
 import * as pino from 'pino';
 import { DeployedVaultProvider } from './contexts';
@@ -82,7 +82,7 @@ const EnvErrorDisplay: React.FC<{ errors: string[] }> = ({ errors }) => (
         }}
       >
         Set the required environment variables in your Vercel project dashboard, or in a{' '}
-        <code style={{ color: colors.cyberTeal }}>.env</code> file for local development.
+        <code style={{ color: palette.accent.primary }}>.env</code> file for local development.
       </Typography>
     </Box>
   </Box>

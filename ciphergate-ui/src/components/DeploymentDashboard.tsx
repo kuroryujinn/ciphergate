@@ -9,7 +9,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmberOutlined';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmptyOutlined';
 import RefreshIcon from '@mui/icons-material/RefreshOutlined';
 
-import { colors } from '../config/theme';
+import { palette } from '../config/theme';
 import { getHealthStatus, type HealthStatus } from '../utils/env-validation';
 
 interface StatusItemProps {
@@ -22,9 +22,9 @@ const StatusItem: React.FC<StatusItemProps> = ({ label, status, detail }) => {
   const config = {
     ready: {
       icon: <CheckCircleIcon sx={{ fontSize: 16 }} />,
-      color: colors.successGreen,
-      bgColor: alpha(colors.successGreen, 0.08),
-      borderColor: alpha(colors.successGreen, 0.15),
+      color: palette.accent.success,
+      bgColor: alpha(palette.accent.success, 0.08),
+      borderColor: alpha(palette.accent.success, 0.15),
     },
     unavailable: {
       icon: <CancelIcon sx={{ fontSize: 16 }} />,
@@ -34,9 +34,9 @@ const StatusItem: React.FC<StatusItemProps> = ({ label, status, detail }) => {
     },
     pending: {
       icon: <HourglassEmptyIcon sx={{ fontSize: 16 }} />,
-      color: colors.warningAmber,
-      bgColor: alpha(colors.warningAmber, 0.08),
-      borderColor: alpha(colors.warningAmber, 0.15),
+      color: palette.accent.warning,
+      bgColor: alpha(palette.accent.warning, 0.08),
+      borderColor: alpha(palette.accent.warning, 0.15),
     },
     info: {
       icon: <WarningAmberIcon sx={{ fontSize: 16 }} />,
@@ -94,9 +94,9 @@ const StatusItem: React.FC<StatusItemProps> = ({ label, status, detail }) => {
 const EnvVarTable: React.FC<{ health: HealthStatus }> = ({ health }) => (
   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
     {health.variables.map((v) => {
-      const statusColor = v.configured ? colors.successGreen : '#ef4444';
-      const statusBg = v.configured ? alpha(colors.successGreen, 0.04) : alpha('#ef4444', 0.04);
-      const statusBorder = v.configured ? alpha(colors.successGreen, 0.08) : alpha('#ef4444', 0.08);
+      const statusColor = v.configured ? palette.accent.success : '#ef4444';
+      const statusBg = v.configured ? alpha(palette.accent.success, 0.04) : alpha('#ef4444', 0.04);
+      const statusBorder = v.configured ? alpha(palette.accent.success, 0.08) : alpha('#ef4444', 0.08);
       const displayValue = v.configured ? `${v.value?.substring(0, 8)}...` : '—';
 
       return (
@@ -194,7 +194,7 @@ export const DeploymentDashboard: React.FC = () => {
               fontWeight: 800,
               fontSize: { xs: '1.5rem', md: '2rem' },
               letterSpacing: '-0.02em',
-              background: `linear-gradient(135deg, ${colors.cyberTeal}, ${colors.electricViolet})`,
+              background: `linear-gradient(135deg, ${palette.accent.primary}, ${palette.accent.info})`,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
             }}
@@ -206,17 +206,17 @@ export const DeploymentDashboard: React.FC = () => {
               px: 1,
               py: 0.25,
               borderRadius: 1,
-              background: health.status === 'healthy' ? alpha(colors.successGreen, 0.1) : alpha('#94a3b8', 0.08),
+              background: health.status === 'healthy' ? alpha(palette.accent.success, 0.1) : alpha('#94a3b8', 0.08),
               border:
                 health.status === 'healthy'
-                  ? `1px solid ${alpha(colors.successGreen, 0.2)}`
+                  ? `1px solid ${alpha(palette.accent.success, 0.2)}`
                   : `1px solid ${alpha('#94a3b8', 0.1)}`,
             }}
           >
             <Typography
               variant="caption"
               sx={{
-                color: health.status === 'healthy' ? colors.successGreen : '#94a3b8',
+                color: health.status === 'healthy' ? palette.accent.success : '#94a3b8',
                 fontWeight: 700,
                 fontSize: '0.55rem',
                 letterSpacing: '0.08em',
@@ -321,7 +321,7 @@ export const DeploymentDashboard: React.FC = () => {
         sx={{
           mb: 3,
           background: `linear-gradient(135deg, ${alpha('#12162a', 0.95)} 0%, ${alpha('#1e2240', 0.6)} 100%)`,
-          border: `1px solid ${alpha(colors.cyberTeal, 0.12)}`,
+          border: `1px solid ${alpha(palette.accent.primary, 0.12)}`,
           borderRadius: 2,
         }}
       >
@@ -333,7 +333,7 @@ export const DeploymentDashboard: React.FC = () => {
             right: 24,
             height: 2,
             borderRadius: 1,
-            background: `linear-gradient(90deg, ${alpha(colors.cyberTeal, 0.3)}, ${alpha(colors.cyberTeal, 0.8)}, ${alpha(colors.cyberTeal, 0.3)})`,
+            background: `linear-gradient(90deg, ${alpha(palette.accent.primary, 0.3)}, ${alpha(palette.accent.primary, 0.8)}, ${alpha(palette.accent.primary, 0.3)})`,
           }}
         />
         <CardContent sx={{ p: 3 }}>
@@ -341,7 +341,7 @@ export const DeploymentDashboard: React.FC = () => {
             <Typography
               variant="subtitle2"
               sx={{
-                color: colors.cyberTeal,
+                color: palette.accent.primary,
                 fontWeight: 700,
                 fontSize: '0.8125rem',
                 letterSpacing: '0.05em',
@@ -353,7 +353,7 @@ export const DeploymentDashboard: React.FC = () => {
             <Box sx={{ flex: 1 }} />
             <RefreshIcon
               sx={{
-                color: alpha(colors.cyberTeal, 0.4),
+                color: alpha(palette.accent.primary, 0.4),
                 fontSize: 14,
                 animation: 'none',
               }}
@@ -390,7 +390,7 @@ export const DeploymentDashboard: React.FC = () => {
       <Card
         sx={{
           background: `linear-gradient(135deg, ${alpha('#12162a', 0.95)} 0%, ${alpha('#1e2240', 0.6)} 100%)`,
-          border: `1px solid ${alpha(colors.cyberTeal, 0.12)}`,
+          border: `1px solid ${alpha(palette.accent.primary, 0.12)}`,
           borderRadius: 2,
         }}
       >
@@ -402,14 +402,14 @@ export const DeploymentDashboard: React.FC = () => {
             right: 24,
             height: 2,
             borderRadius: 1,
-            background: `linear-gradient(90deg, ${alpha(colors.cyberTeal, 0.3)}, ${alpha(colors.cyberTeal, 0.8)}, ${alpha(colors.cyberTeal, 0.3)})`,
+            background: `linear-gradient(90deg, ${alpha(palette.accent.primary, 0.3)}, ${alpha(palette.accent.primary, 0.8)}, ${alpha(palette.accent.primary, 0.3)})`,
           }}
         />
         <CardContent sx={{ p: 3 }}>
           <Typography
             variant="subtitle2"
             sx={{
-              color: colors.cyberTeal,
+              color: palette.accent.primary,
               fontWeight: 700,
               fontSize: '0.8125rem',
               letterSpacing: '0.05em',
@@ -428,13 +428,13 @@ export const DeploymentDashboard: React.FC = () => {
             ].map((circuit) => (
               <Chip
                 key={circuit.name}
-                icon={<CheckCircleIcon sx={{ fontSize: 12, color: `${colors.successGreen} !important` }} />}
+                icon={<CheckCircleIcon sx={{ fontSize: 12, color: `${palette.accent.success} !important` }} />}
                 label={`${circuit.name}`}
                 size="small"
                 sx={{
-                  bgcolor: alpha(colors.successGreen, 0.08),
-                  color: colors.successGreen,
-                  border: `1px solid ${alpha(colors.successGreen, 0.15)}`,
+                  bgcolor: alpha(palette.accent.success, 0.08),
+                  color: palette.accent.success,
+                  border: `1px solid ${alpha(palette.accent.success, 0.15)}`,
                   height: 24,
                   '& .MuiChip-label': {
                     fontSize: '0.65rem',

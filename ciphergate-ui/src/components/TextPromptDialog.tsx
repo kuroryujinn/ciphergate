@@ -3,7 +3,7 @@
 
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography, alpha } from '@mui/material';
 import React, { useState } from 'react';
-import { colors } from '../config/theme';
+import { palette } from '../config/theme';
 
 /**
  * The props required by the {@link TextPromptDialog} component.
@@ -51,7 +51,7 @@ export const TextPromptDialog: React.FC<Readonly<TextPromptDialogProps>> = ({ pr
             backgroundImage: `linear-gradient(135deg, ${alpha('#12162a', 0.95)} 0%, ${alpha('#0a0e27', 0.98)} 100%)`,
             backdropFilter: 'blur(24px)',
             WebkitBackdropFilter: 'blur(24px)',
-            border: `1px solid ${alpha(colors.cyberTeal, 0.1)}`,
+            border: `1px solid ${alpha(palette.accent.primary, 0.1)}`,
             boxShadow: `0 24px 80px ${alpha('#000', 0.6)}`,
           },
         },
@@ -98,9 +98,9 @@ export const TextPromptDialog: React.FC<Readonly<TextPromptDialogProps>> = ({ pr
           sx={{
             '& .MuiOutlinedInput-root': {
               backgroundColor: alpha('#000', 0.3),
-              '& fieldset': { borderColor: alpha(colors.cyberTeal, 0.15) },
-              '&:hover fieldset': { borderColor: alpha(colors.cyberTeal, 0.35) },
-              '&.Mui-focused fieldset': { borderColor: colors.cyberTeal },
+              '& fieldset': { borderColor: alpha(palette.accent.primary, 0.15) },
+              '&:hover fieldset': { borderColor: alpha(palette.accent.primary, 0.35) },
+              '&.Mui-focused fieldset': { borderColor: palette.accent.primary },
             },
           }}
         />
@@ -131,11 +131,11 @@ export const TextPromptDialog: React.FC<Readonly<TextPromptDialogProps>> = ({ pr
           onClick={handleSubmit}
           type="submit"
           sx={{
-            bgcolor: colors.cyberTeal,
+            bgcolor: palette.accent.primary,
             color: '#0a0e27',
             fontWeight: 700,
-            '&:hover': { bgcolor: alpha(colors.cyberTeal, 0.85) },
-            '&.Mui-disabled': { bgcolor: alpha(colors.cyberTeal, 0.15), color: alpha('#0a0e27', 0.3) },
+            '&:hover': { bgcolor: alpha(palette.accent.primary, 0.85) },
+            '&.Mui-disabled': { bgcolor: alpha(palette.accent.primary, 0.15), color: alpha('#0a0e27', 0.3) },
           }}
         >
           Submit

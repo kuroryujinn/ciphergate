@@ -8,7 +8,7 @@ import VaultAddIcon from '@mui/icons-material/EnhancedEncryptionOutlined';
 import CreateVaultIcon from '@mui/icons-material/AddCircleOutlined';
 import JoinVaultIcon from '@mui/icons-material/AddLinkOutlined';
 import { TextPromptDialog } from './TextPromptDialog';
-import { colors } from '../config/theme';
+import { palette } from '../config/theme';
 
 export interface EmptyVaultCardContentProps {
   onCreateVaultCallback: () => void;
@@ -42,12 +42,12 @@ export const EmptyVaultCardContent: React.FC<Readonly<EmptyVaultCardContentProps
                 width: 64,
                 height: 64,
                 borderRadius: 3,
-                background: `linear-gradient(135deg, ${alpha(colors.cyberTeal, 0.12)} 0%, ${alpha(colors.electricViolet, 0.08)} 100%)`,
-                border: `1px solid ${alpha(colors.cyberTeal, 0.15)}`,
+                background: `linear-gradient(135deg, ${alpha(palette.accent.primary, 0.12)} 0%, ${alpha(palette.accent.info, 0.08)} 100%)`,
+                border: `1px solid ${alpha(palette.accent.primary, 0.15)}`,
                 animation: 'float 3s ease-in-out infinite',
               }}
             >
-              <VaultAddIcon sx={{ color: colors.cyberTeal, fontSize: 32 }} />
+              <VaultAddIcon sx={{ color: palette.accent.primary, fontSize: 32 }} />
             </Box>
           </Zoom>
         </Box>
@@ -75,7 +75,7 @@ export const EmptyVaultCardContent: React.FC<Readonly<EmptyVaultCardContentProps
             onClick={onCreateVaultCallback}
             size="small"
             sx={{
-              color: colors.cyberTeal,
+              color: palette.accent.primary,
               bgcolor: (t) => alpha(t.palette.primary.main, 0.08),
               border: '1px solid',
               borderColor: (t) => alpha(t.palette.primary.main, 0.15),
@@ -96,7 +96,7 @@ export const EmptyVaultCardContent: React.FC<Readonly<EmptyVaultCardContentProps
             onClick={() => setTextPromptOpen(true)}
             size="small"
             sx={{
-              color: colors.electricViolet,
+              color: palette.accent.info,
               bgcolor: (t) => alpha(t.palette.secondary.main, 0.08),
               border: '1px solid',
               borderColor: (t) => alpha(t.palette.secondary.main, 0.15),

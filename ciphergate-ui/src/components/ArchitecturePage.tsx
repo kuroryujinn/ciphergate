@@ -13,7 +13,7 @@ import StorageIcon from '@mui/icons-material/StorageOutlined';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownwardOutlined';
 import WarningAmberIcon from '@mui/icons-material/WarningAmberOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircleOutlined';
-import { colors } from '../config/theme';
+import { palette } from '../config/theme';
 
 interface LayerProps {
   icon: React.ReactNode;
@@ -103,7 +103,7 @@ const LayerCard: React.FC<LayerProps> = ({ icon, title, description, accent, ava
                 </Typography>
               </Box>
             )}
-            {available && <CheckCircleIcon sx={{ fontSize: 14, color: colors.successGreen }} />}
+            {available && <CheckCircleIcon sx={{ fontSize: 14, color: palette.accent.success }} />}
           </Box>
           <Typography
             variant="caption"
@@ -136,7 +136,7 @@ export const ArchitecturePage: React.FC = () => {
       title: '1. Frontend (React 19 + MUI 9)',
       description:
         'React 19 single-page application with Material UI 9. Built with Vite 8. Communicates with the Midnight SDK through the CipherGate API layer.',
-      accent: colors.cyberTeal,
+      accent: palette.accent.primary,
       available: true,
     },
     {
@@ -144,7 +144,7 @@ export const ArchitecturePage: React.FC = () => {
       title: '2. Midnight 1AM Wallet',
       description:
         'Browser extension wallet (dapp-connector-api 4.x). Manages keys, signs transactions, and provides the connection to Midnight Network.',
-      accent: colors.cyberTeal,
+      accent: palette.accent.primary,
       available: true,
     },
     {
@@ -152,7 +152,7 @@ export const ArchitecturePage: React.FC = () => {
       title: '3. Midnight SDK (Compact Runtime)',
       description:
         'Midnight.js SDK provides providers for proof generation, indexer queries, ZK config, and contract deployment. The CipherGateAPI class wraps all SDK interactions.',
-      accent: colors.cyberTeal,
+      accent: palette.accent.primary,
       available: true,
     },
     {
@@ -168,7 +168,7 @@ export const ArchitecturePage: React.FC = () => {
       title: '5. Compact Circuits (Zero-Knowledge)',
       description:
         'Custom Compact language smart contracts that define the vault state machine and ZK proof logic. Circuits assert authorization without revealing secrets.',
-      accent: colors.electricViolet,
+      accent: palette.accent.info,
       available: true,
     },
     {
@@ -176,7 +176,7 @@ export const ArchitecturePage: React.FC = () => {
       title: '6. Proof Server (Docker)',
       description:
         'Midnight proof server generates zero-knowledge proofs for each circuit call. Required for all contract transactions. Run locally via docker: midnightnetwork/proof-server.',
-      accent: colors.electricViolet,
+      accent: palette.accent.info,
       available: true,
     },
     {
@@ -208,7 +208,7 @@ export const ArchitecturePage: React.FC = () => {
             fontSize: { xs: '1.5rem', md: '2rem' },
             letterSpacing: '-0.02em',
             mb: 1,
-            background: `linear-gradient(135deg, ${colors.cyberTeal}, ${colors.electricViolet})`,
+            background: `linear-gradient(135deg, ${palette.accent.primary}, ${palette.accent.info})`,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}

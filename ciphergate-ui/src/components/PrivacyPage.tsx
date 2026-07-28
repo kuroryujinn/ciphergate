@@ -11,7 +11,7 @@ import FingerprintIcon from '@mui/icons-material/FingerprintOutlined';
 import EnhancedEncryptionIcon from '@mui/icons-material/EnhancedEncryptionOutlined';
 import StorageIcon from '@mui/icons-material/StorageOutlined';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownwardOutlined';
-import { colors } from '../config/theme';
+import { palette } from '../config/theme';
 
 const FlowArrow: React.FC = () => (
   <Box sx={{ display: 'flex', justifyContent: 'center', py: 0.5 }}>
@@ -100,15 +100,15 @@ const PrivacyStep: React.FC<PrivacyStepProps> = ({ icon, title, description, isP
             px: 1,
             py: 0.25,
             borderRadius: 1,
-            background: isPrivate ? alpha(colors.cyberTeal, 0.1) : alpha(colors.warningAmber, 0.1),
-            border: `1px solid ${isPrivate ? alpha(colors.cyberTeal, 0.2) : alpha(colors.warningAmber, 0.2)}`,
+            background: isPrivate ? alpha(palette.accent.primary, 0.1) : alpha(palette.accent.warning, 0.1),
+            border: `1px solid ${isPrivate ? alpha(palette.accent.primary, 0.2) : alpha(palette.accent.warning, 0.2)}`,
             whiteSpace: 'nowrap',
           }}
         >
           <Typography
             variant="caption"
             sx={{
-              color: isPrivate ? colors.cyberTeal : colors.warningAmber,
+              color: isPrivate ? palette.accent.primary : palette.accent.warning,
               fontWeight: 700,
               fontSize: '0.6rem',
               letterSpacing: '0.08em',
@@ -131,7 +131,7 @@ export const PrivacyPage: React.FC = () => {
       description:
         'A 32-byte random secret key is generated on your device. This key is the root of all identity and authorization. It never leaves your machine and is never written to the blockchain.',
       isPrivate: true,
-      accent: colors.cyberTeal,
+      accent: palette.accent.primary,
     },
     {
       icon: <VisibilityOffIcon sx={{ fontSize: 20 }} />,
@@ -139,7 +139,7 @@ export const PrivacyPage: React.FC = () => {
       description:
         'The secret key is provided to the Compact circuit as a private witness. The circuit can use it to prove ownership or authorization without revealing the key itself. Witness data is ephemeral and exists only for the duration of proof generation.',
       isPrivate: true,
-      accent: colors.cyberTeal,
+      accent: palette.accent.primary,
     },
     {
       icon: <FingerprintIcon sx={{ fontSize: 20 }} />,
@@ -155,7 +155,7 @@ export const PrivacyPage: React.FC = () => {
       description:
         'A ZK proof is generated attesting that the caller knows a secret key whose public key matches an authorized on-chain value. The proof server produces this proof without learning the secret key. The blockchain verifies the proof without seeing which key was used.',
       isPrivate: true,
-      accent: colors.electricViolet,
+      accent: palette.accent.info,
     },
     {
       icon: <LockIcon sx={{ fontSize: 20 }} />,
@@ -163,7 +163,7 @@ export const PrivacyPage: React.FC = () => {
       description:
         'File payloads and sharing keys are stored as Opaque strings on the ledger. The contract never decrypts or inspects these values — it only stores and retrieves them. Without the correct decryption key, the data is meaningless.',
       isPrivate: false,
-      accent: colors.warningAmber,
+      accent: palette.accent.warning,
     },
     {
       icon: <StorageIcon sx={{ fontSize: 20 }} />,
@@ -186,7 +186,7 @@ export const PrivacyPage: React.FC = () => {
             fontSize: { xs: '1.5rem', md: '2rem' },
             letterSpacing: '-0.02em',
             mb: 1,
-            background: `linear-gradient(135deg, ${colors.cyberTeal}, ${colors.electricViolet})`,
+            background: `linear-gradient(135deg, ${palette.accent.primary}, ${palette.accent.info})`,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}
@@ -213,7 +213,7 @@ export const PrivacyPage: React.FC = () => {
       <Card
         sx={{
           background: `linear-gradient(135deg, ${alpha('#12162a', 0.95)} 0%, ${alpha('#1e2240', 0.6)} 100%)`,
-          border: `1px solid ${alpha(colors.cyberTeal, 0.12)}`,
+          border: `1px solid ${alpha(palette.accent.primary, 0.12)}`,
           borderRadius: 2,
           mb: 4,
         }}
@@ -226,7 +226,7 @@ export const PrivacyPage: React.FC = () => {
             right: 24,
             height: 2,
             borderRadius: 1,
-            background: `linear-gradient(90deg, ${alpha(colors.cyberTeal, 0.3)}, ${alpha(colors.cyberTeal, 0.8)}, ${alpha(colors.cyberTeal, 0.3)})`,
+            background: `linear-gradient(90deg, ${alpha(palette.accent.primary, 0.3)}, ${alpha(palette.accent.primary, 0.8)}, ${alpha(palette.accent.primary, 0.3)})`,
           }}
         />
         <CardContent sx={{ p: 3 }}>
@@ -237,7 +237,7 @@ export const PrivacyPage: React.FC = () => {
               fontSize: '1rem',
               letterSpacing: '0.02em',
               mb: 2,
-              color: colors.cyberTeal,
+              color: palette.accent.primary,
             }}
           >
             Public State (On-Chain)
@@ -270,7 +270,7 @@ export const PrivacyPage: React.FC = () => {
                   variant="caption"
                   sx={{
                     fontFamily: '"JetBrains Mono", monospace',
-                    color: colors.warningAmber,
+                    color: palette.accent.warning,
                     fontWeight: 600,
                     minWidth: 180,
                     fontSize: '0.7rem',
@@ -295,7 +295,7 @@ export const PrivacyPage: React.FC = () => {
               letterSpacing: '0.02em',
               mb: 2,
               mt: 2,
-              color: colors.cyberTeal,
+              color: palette.accent.primary,
             }}
           >
             Private State (Client-Side Only)
@@ -315,15 +315,15 @@ export const PrivacyPage: React.FC = () => {
                   gap: 2,
                   p: 1.5,
                   borderRadius: 1,
-                  background: alpha(colors.cyberTeal, 0.04),
-                  border: `1px solid ${alpha(colors.cyberTeal, 0.1)}`,
+                  background: alpha(palette.accent.primary, 0.04),
+                  border: `1px solid ${alpha(palette.accent.primary, 0.1)}`,
                 }}
               >
                 <Typography
                   variant="caption"
                   sx={{
                     fontFamily: '"JetBrains Mono", monospace',
-                    color: colors.cyberTeal,
+                    color: palette.accent.primary,
                     fontWeight: 600,
                     minWidth: 180,
                     fontSize: '0.7rem',
@@ -343,8 +343,8 @@ export const PrivacyPage: React.FC = () => {
       {/* Key Takeaway */}
       <Card
         sx={{
-          background: `linear-gradient(135deg, ${alpha(colors.cyberTeal, 0.06)} 0%, transparent 100%)`,
-          border: `1px solid ${alpha(colors.cyberTeal, 0.15)}`,
+          background: `linear-gradient(135deg, ${alpha(palette.accent.primary, 0.06)} 0%, transparent 100%)`,
+          border: `1px solid ${alpha(palette.accent.primary, 0.15)}`,
           borderRadius: 2,
         }}
       >
@@ -352,7 +352,7 @@ export const PrivacyPage: React.FC = () => {
           <Typography
             variant="subtitle2"
             sx={{
-              color: colors.cyberTeal,
+              color: palette.accent.primary,
               fontWeight: 700,
               fontSize: '0.8125rem',
               mb: 1,

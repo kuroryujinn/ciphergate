@@ -43,7 +43,7 @@ import { type Observable } from 'rxjs';
 import { State } from '../../../contract/src/index';
 import { EmptyVaultCardContent } from './Vault.EmptyCardContent';
 import { CircuitExecutionStatus, useCircuitExecutionState } from './CircuitExecutionStatus';
-import { colors } from '../config/theme';
+import { palette } from '../config/theme';
 
 export interface VaultProps {
   vaultDeployment$?: Observable<VaultDeployment>;
@@ -171,14 +171,14 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
    * Returns the accent colour for the current vault state.
    */
   const stateAccent = (opacity = 1) => {
-    if (!vaultState) return alpha(colors.cyberTeal, 0.3 * opacity);
+    if (!vaultState) return alpha(palette.accent.primary, 0.3 * opacity);
     switch (vaultState.state) {
       case State.SHARED:
-        return alpha(colors.cyberTeal, opacity);
+        return alpha(palette.accent.primary, opacity);
       case State.PRIVATE:
-        return alpha(colors.successGreen, opacity);
+        return alpha(palette.accent.success, opacity);
       default:
-        return alpha(colors.warningAmber, opacity);
+        return alpha(palette.accent.warning, opacity);
     }
   };
 
@@ -265,11 +265,11 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
               <Typography
                 variant="body2"
                 data-testid="vault-error-message"
-                sx={{ color: colors.errorRed, textAlign: 'center', px: 2, fontFamily: 'monospace', fontSize: 11 }}
+                sx={{ color: palette.accent.error, textAlign: 'center', px: 2, fontFamily: 'monospace', fontSize: 11 }}
               >
                 {errorMessage}
               </Typography>
-              <Typography variant="caption" sx={{ color: alpha(colors.errorRed, 0.5), mt: 0.5 }}>
+              <Typography variant="caption" sx={{ color: alpha(palette.accent.error, 0.5), mt: 0.5 }}>
                 Tap to dismiss
               </Typography>
             </Backdrop>
@@ -292,9 +292,9 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                   >
                     {vaultState ? (
                       vaultState.state === State.SHARED ? (
-                        <LockOpenIcon data-testid="vault-shared-icon" sx={{ color: colors.cyberTeal, fontSize: 18 }} />
+                        <LockOpenIcon data-testid="vault-shared-icon" sx={{ color: palette.accent.primary, fontSize: 18 }} />
                       ) : (
-                        <LockIcon data-testid="vault-locked-icon" sx={{ color: colors.cyberTeal, fontSize: 18 }} />
+                        <LockIcon data-testid="vault-locked-icon" sx={{ color: palette.accent.primary, fontSize: 18 }} />
                       )
                     ) : (
                       <Skeleton variant="circular" width={20} height={20} />
@@ -324,11 +324,11 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                     <Chip
                       icon={
                         vaultState.state === State.SHARED ? (
-                          <LockOpenIcon sx={{ fontSize: 10, color: `${colors.cyberTeal} !important` }} />
+                          <LockOpenIcon sx={{ fontSize: 10, color: `${palette.accent.primary} !important` }} />
                         ) : vaultState.state === State.PRIVATE ? (
-                          <LockIcon sx={{ fontSize: 10, color: `${colors.successGreen} !important` }} />
+                          <LockIcon sx={{ fontSize: 10, color: `${palette.accent.success} !important` }} />
                         ) : (
-                          <VaultIcon sx={{ fontSize: 10, color: `${colors.warningAmber} !important` }} />
+                          <VaultIcon sx={{ fontSize: 10, color: `${palette.accent.warning} !important` }} />
                         )
                       }
                       label={stateLabel}
@@ -343,7 +343,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                       }}
                     />
                     <Chip
-                      icon={<PersonIcon sx={{ fontSize: 10, color: `${colors.electricViolet} !important` }} />}
+                      icon={<PersonIcon sx={{ fontSize: 10, color: `${palette.accent.info} !important` }} />}
                       label={roleLabel}
                       size="small"
                       sx={{
@@ -356,14 +356,14 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                       }}
                     />
                     <Chip
-                      icon={<KeyIcon sx={{ fontSize: 10, color: `${colors.warningAmber} !important` }} />}
+                      icon={<KeyIcon sx={{ fontSize: 10, color: `${palette.accent.warning} !important` }} />}
                       label={`Audit: ${vaultState.accessCount.toString()}`}
                       size="small"
                       sx={{
-                        bgcolor: alpha(colors.warningAmber, 0.08),
-                        color: alpha(colors.warningAmber, 0.9),
+                        bgcolor: alpha(palette.accent.warning, 0.08),
+                        color: alpha(palette.accent.warning, 0.9),
                         border: '1px solid',
-                        borderColor: alpha(colors.warningAmber, 0.1),
+                        borderColor: alpha(palette.accent.warning, 0.1),
                         height: 20,
                         '& .MuiChip-icon': { ml: 0.5 },
                       }}
@@ -378,7 +378,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                       onClick={onCopyContractAddress}
                       size="small"
                       sx={{
-                        color: copied ? colors.successGreen : (t) => alpha(t.palette.primary.main, 0.5),
+                        color: copied ? palette.accent.success : (t) => alpha(t.palette.primary.main, 0.5),
                         transition: 'all 0.2s ease',
                       }}
                     >
@@ -577,7 +577,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                           onClick={onUploadVault}
                           size="small"
                           sx={{
-                            color: colors.cyberTeal,
+                            color: palette.accent.primary,
                             bgcolor: (t) =>
                               payloadPrompt?.length ? alpha(t.palette.primary.main, 0.08) : 'transparent',
                             '&:hover': { bgcolor: (t) => alpha(t.palette.primary.main, 0.15) },
@@ -598,7 +598,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                           onClick={onShareVault}
                           size="small"
                           sx={{
-                            color: colors.electricViolet,
+                            color: palette.accent.info,
                             bgcolor: (t) =>
                               recipientPrompt?.length && sharingKeyPrompt?.length
                                 ? alpha(t.palette.secondary.main, 0.08)
@@ -619,7 +619,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                         onClick={onAccessVault}
                         size="small"
                         sx={{
-                          color: colors.successGreen,
+                          color: palette.accent.success,
                           bgcolor: (t) => alpha(t.palette.success.main, 0.08),
                           '&:hover': { bgcolor: (t) => alpha(t.palette.success.main, 0.15) },
                         }}
@@ -641,7 +641,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                           onClick={handleRevokeClick}
                           size="small"
                           sx={{
-                            color: colors.errorRed,
+                            color: palette.accent.error,
                             bgcolor: (t) =>
                               vaultState.state === State.SHARED ? alpha(t.palette.error.main, 0.08) : 'transparent',
                             '&:hover': { bgcolor: (t) => alpha(t.palette.error.main, 0.15) },
@@ -673,14 +673,14 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                 borderRadius: 3,
                 backgroundImage: `linear-gradient(135deg, ${alpha('#12162a', 0.95)} 0%, ${alpha('#0a0e27', 0.98)} 100%)`,
                 backdropFilter: 'blur(24px)',
-                border: `1px solid ${alpha(colors.errorRed, 0.15)}`,
+                border: `1px solid ${alpha(palette.accent.error, 0.15)}`,
                 boxShadow: `0 24px 80px ${alpha('#000', 0.6)}`,
               },
             },
           }}
         >
           <DialogTitle sx={{ pb: 0.5 }}>
-            <Typography variant="body1" sx={{ color: colors.errorRed, fontWeight: 600, fontSize: '0.9375rem' }}>
+            <Typography variant="body1" sx={{ color: palette.accent.error, fontWeight: 600, fontSize: '0.9375rem' }}>
               Confirm Revoke Access
             </Typography>
           </DialogTitle>
@@ -708,10 +708,10 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
               disableElevation
               onClick={onRevokeVault}
               sx={{
-                bgcolor: colors.errorRed,
+                bgcolor: palette.accent.error,
                 color: '#fff',
                 fontWeight: 700,
-                '&:hover': { bgcolor: alpha(colors.errorRed, 0.85) },
+                '&:hover': { bgcolor: alpha(palette.accent.error, 0.85) },
               }}
             >
               Confirm Revoke

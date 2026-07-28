@@ -10,7 +10,7 @@ import AutoFixHighIcon from '@mui/icons-material/AutoFixHighOutlined';
 import SendIcon from '@mui/icons-material/SendOutlined';
 import CloudQueueIcon from '@mui/icons-material/CloudQueueOutlined';
 import WarningAmberIcon from '@mui/icons-material/WarningAmberOutlined';
-import { colors } from '../config/theme';
+import { palette } from '../config/theme';
 
 export type CircuitExecutionStep =
   | 'idle'
@@ -59,17 +59,17 @@ const allSteps: CircuitExecutionStep[] = [
 ];
 
 const CircuitStepIndicator: React.FC<CircuitStepIndicatorProps> = ({ isActive, isCompleted, label, icon }) => {
-  const color = isCompleted ? colors.successGreen : isActive ? colors.cyberTeal : '#475569';
+  const color = isCompleted ? palette.accent.success : isActive ? palette.accent.primary : palette.text.disabled;
   const bgColor = isCompleted
-    ? alpha(colors.successGreen, 0.08)
+    ? alpha(palette.accent.success, 0.08)
     : isActive
-      ? alpha(colors.cyberTeal, 0.08)
-      : alpha('#475569', 0.08);
+      ? alpha(palette.accent.primary, 0.08)
+      : alpha(palette.text.disabled, 0.08);
   const borderColor = isCompleted
-    ? alpha(colors.successGreen, 0.2)
+    ? alpha(palette.accent.success, 0.2)
     : isActive
-      ? alpha(colors.cyberTeal, 0.2)
-      : alpha('#475569', 0.1);
+      ? alpha(palette.accent.primary, 0.2)
+      : alpha(palette.text.disabled, 0.1);
 
   return (
     <Box
@@ -99,7 +99,7 @@ const CircuitStepIndicator: React.FC<CircuitStepIndicatorProps> = ({ isActive, i
         {label}
       </Typography>
       {isActive && !isCompleted && <CircularProgress size={10} thickness={6} sx={{ color, ml: 'auto' }} />}
-      {isCompleted && <CheckCircleIcon sx={{ fontSize: 14, color: colors.successGreen, ml: 'auto' }} />}
+      {isCompleted && <CheckCircleIcon sx={{ fontSize: 14, color: palette.accent.success, ml: 'auto' }} />}
     </Box>
   );
 };
@@ -121,8 +121,8 @@ export const CircuitExecutionStatus: React.FC<CircuitExecutionStatusProps> = ({ 
         sx={{
           p: 1.5,
           borderRadius: 2,
-          background: isBlocked ? alpha('#ef4444', 0.04) : isError ? alpha('#ef4444', 0.06) : alpha('#12162a', 0.6),
-          border: `1px solid ${isBlocked || isError ? alpha('#ef4444', 0.15) : alpha(colors.cyberTeal, 0.1)}`,
+          background: isBlocked ? alpha(palette.accent.error, 0.04) : isError ? alpha(palette.accent.error, 0.06) : alpha(palette.bg.inset, 0.6),
+          border: `1px solid ${isBlocked || isError ? alpha(palette.accent.error, 0.15) : alpha(palette.accent.primary, 0.1)}`,
         }}
       >
         {/* Circuit Name Header */}
@@ -130,7 +130,7 @@ export const CircuitExecutionStatus: React.FC<CircuitExecutionStatusProps> = ({ 
           <Typography
             variant="caption"
             sx={{
-              color: colors.cyberTeal,
+              color: palette.accent.primary,
               fontWeight: 700,
               fontSize: '0.65rem',
               letterSpacing: '0.08em',
@@ -146,13 +146,13 @@ export const CircuitExecutionStatus: React.FC<CircuitExecutionStatusProps> = ({ 
                 px: 0.75,
                 py: 0.15,
                 borderRadius: 1,
-                background: alpha('#ef4444', 0.1),
+                background: alpha(palette.accent.error, 0.1),
               }}
             >
               <Typography
                 variant="caption"
                 sx={{
-                  color: '#ef4444',
+                  color: palette.accent.error,
                   fontWeight: 700,
                   fontSize: '0.55rem',
                   letterSpacing: '0.05em',
@@ -162,7 +162,7 @@ export const CircuitExecutionStatus: React.FC<CircuitExecutionStatusProps> = ({ 
               </Typography>
             </Box>
           )}
-          {isCompleted && <CheckCircleIcon sx={{ fontSize: 14, color: colors.successGreen, ml: 'auto' }} />}
+          {isCompleted && <CheckCircleIcon sx={{ fontSize: 14, color: palette.accent.success, ml: 'auto' }} />}
         </Box>
 
         {/* Step Timeline */}
@@ -191,7 +191,7 @@ export const CircuitExecutionStatus: React.FC<CircuitExecutionStatusProps> = ({ 
               p: 1,
               borderRadius: 1,
               background: alpha('#000', 0.2),
-              border: `1px solid ${alpha(isBlocked || isError ? '#ef4444' : colors.cyberTeal, 0.08)}`,
+              border: `1px solid ${alpha(isBlocked || isError ? '#ef4444' : palette.accent.primary, 0.08)}`,
             }}
           >
             <Typography
