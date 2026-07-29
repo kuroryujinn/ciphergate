@@ -3,7 +3,19 @@
 
 import React, { useState } from 'react';
 import { Box } from '@mui/material';
-import { MainLayout, Dashboard, PrivacyPage, ArchitecturePage, DeploymentDashboard } from './components';
+import {
+  MainLayout,
+  Dashboard,
+  PrivacyPage,
+  ArchitecturePage,
+  DeploymentDashboard,
+  WalletPage,
+  ContractsPage,
+  ProofEnginePage,
+  TransactionsPage,
+  AuditLogsPage,
+  SettingsPage,
+} from './components';
 
 const VIEW_KEY = 'ciphergate-active-view';
 
@@ -40,13 +52,17 @@ const App: React.FC = () => {
       case 'deployment':
         return <DeploymentDashboard />;
       case 'wallet':
+        return <WalletPage />;
       case 'contracts':
+        return <ContractsPage />;
       case 'proof-engine':
+        return <ProofEnginePage />;
       case 'transactions':
+        return <TransactionsPage />;
       case 'audit-logs':
+        return <AuditLogsPage />;
       case 'settings':
-        // Sidebar navigation items all route to main dashboard for now
-        return <Dashboard />;
+        return <SettingsPage />;
       default:
         return <Dashboard />;
     }
