@@ -57,6 +57,9 @@ jspm_packages/
 *.njsproj
 *.sln
 
+# Husky internal state
+.husky/_
+
 # Compact compiler output (git-ignored unless already tracked)
 # Do NOT add new managed files here without considering Vercel deployment needs
 /contract/src/managed/ciphergate/compiler/

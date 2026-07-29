@@ -1,0 +1,4 @@
+echo "🔒 Running full CI for all workspaces before push..."
+echo ""
+
+npm run ci --workspaces

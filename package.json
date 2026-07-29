@@ -44,7 +44,14 @@
   "scripts": {
     "compact": "npm run compact --workspace=contract",
     "build": "npm run compact && npm run build --workspace=contract && npm run build --workspace=ciphergate-cli && npm run build --workspace=ciphergate-ui",
-    "deploy": "NODE_OPTIONS=\"--max-old-space-size=12288\" node --experimental-specifier-resolution=node --loader ts-node/esm scripts/deploy-preprod.ts"
+    "deploy": "NODE_OPTIONS=\"--max-old-space-size=12288\" node --experimental-specifier-resolution=node --loader ts-node/esm scripts/deploy-preprod.ts",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "ciphergate-ui/src/**/*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --config ciphergate-ui/eslint.config.mjs --fix"
+    ]
   },
   "devDependencies": {
     "@originjs/vite-plugin-commonjs": "^1.0.3",
@@ -58,6 +65,8 @@
     "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-react": "^7.37.5",
     "http-server": "^14.1.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.2.0",
     "prettier": "^3.8.4",
     "rollup": "^4.62.2",
     "ts-node": "^10.9.2",
