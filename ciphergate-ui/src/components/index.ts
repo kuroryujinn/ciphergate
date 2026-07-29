@@ -12,6 +12,7 @@ export { ProofEnginePage } from './ProofEnginePage';
 export { TransactionsPage } from './TransactionsPage';
 export { AuditLogsPage } from './AuditLogsPage';
 export { SettingsPage } from './SettingsPage';
+export { DashboardPage } from './DashboardPage';
 export { CircuitExecutionStatus, useCircuitExecutionState } from './CircuitExecutionStatus';
 export type { CircuitExecutionState, CircuitExecutionStep } from './CircuitExecutionStatus';
 export * from './Dashboard';

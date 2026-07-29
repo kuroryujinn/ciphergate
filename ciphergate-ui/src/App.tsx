@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { Box } from '@mui/material';
 import {
   MainLayout,
-  Dashboard,
+  DashboardPage,
   PrivacyPage,
   ArchitecturePage,
   DeploymentDashboard,
@@ -64,7 +64,7 @@ const App: React.FC = () => {
       case 'settings':
         return <SettingsPage />;
       default:
-        return <Dashboard />;
+        return <DashboardPage />;
     }
   };
 
