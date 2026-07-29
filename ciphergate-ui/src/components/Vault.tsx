@@ -285,9 +285,9 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                       width: 36,
                       height: 36,
                       borderRadius: 2,
-                      background: (t) => alpha(t.palette.primary.main, 0.1),
+                      background: alpha(palette.accent.primary, 0.1),
                       border: '1px solid',
-                      borderColor: (t) => alpha(t.palette.primary.main, 0.15),
+                      borderColor: alpha(palette.accent.primary, 0.15),
                     }}
                   >
                     {vaultState ? (
@@ -310,11 +310,11 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
               }
               title={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                  <VaultIcon sx={{ fontSize: 14, color: (t) => alpha(t.palette.primary.main, 0.5) }} />
+                  <VaultIcon sx={{ fontSize: 14, color: alpha(palette.accent.primary, 0.5) }} />
                   <Typography
                     variant="subtitle2"
                     sx={{
-                      color: (t) => alpha(t.palette.primary.main, 0.8),
+                      color: alpha(palette.accent.primary, 0.8),
                       fontFamily: '"JetBrains Mono", monospace',
                       fontSize: 12,
                       fontWeight: 500,
@@ -340,10 +340,10 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                       label={stateLabel}
                       size="small"
                       sx={{
-                        bgcolor: (t) => alpha(t.palette.primary.main, 0.08),
+                        bgcolor: alpha(palette.accent.primary, 0.08),
                         color: stateAccent(0.9),
                         border: '1px solid',
-                        borderColor: (t) => alpha(t.palette.primary.main, 0.1),
+                        borderColor: alpha(palette.accent.primary, 0.1),
                         height: 20,
                         '& .MuiChip-icon': { ml: 0.5 },
                       }}
@@ -353,10 +353,10 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                       label={roleLabel}
                       size="small"
                       sx={{
-                        bgcolor: (t) => alpha(t.palette.secondary.main, 0.08),
-                        color: (t) => alpha(t.palette.secondary.main, 0.9),
+                        bgcolor: alpha(palette.metal.chrome, 0.08),
+                        color: alpha(palette.metal.chrome, 0.9),
                         border: '1px solid',
-                        borderColor: (t) => alpha(t.palette.secondary.main, 0.1),
+                        borderColor: alpha(palette.metal.chrome, 0.1),
                         height: 20,
                         '& .MuiChip-icon': { ml: 0.5 },
                       }}
@@ -384,7 +384,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                       onClick={onCopyContractAddress}
                       size="small"
                       sx={{
-                        color: copied ? palette.accent.success : (t) => alpha(t.palette.primary.main, 0.5),
+                        color: copied ? palette.accent.success : alpha(palette.accent.primary, 0.5),
                         transition: 'all 0.2s ease',
                       }}
                     >
@@ -418,7 +418,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                         '& .MuiOutlinedInput-root': {
                           fontFamily: '"JetBrains Mono", monospace',
                           fontSize: 11,
-                          color: '#cbd5e1',
+                          color: palette.text.primary,
                         },
                       }}
                     />
@@ -433,7 +433,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                         borderRadius: 1.5,
                         bgcolor: alpha('#000', 0.25),
                         border: '1px solid',
-                        borderColor: (t) => alpha(t.palette.divider, 0.5),
+                        borderColor: alpha('#fff', 0.03),
                         mb: 1.5,
                       }}
                     >
@@ -454,7 +454,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                       <Typography
                         data-testid="vault-encrypted-payload"
                         sx={{
-                          color: '#94a3b8',
+                          color: palette.text.secondary,
                           fontFamily: '"JetBrains Mono", monospace',
                           fontSize: 11,
                           wordBreak: 'break-all',
@@ -498,7 +498,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                           '& .MuiOutlinedInput-root': {
                             fontFamily: '"JetBrains Mono", monospace',
                             fontSize: 11,
-                            color: '#cbd5e1',
+                            color: palette.text.primary,
                           },
                         }}
                       />
@@ -515,7 +515,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                           '& .MuiOutlinedInput-root': {
                             fontFamily: '"JetBrains Mono", monospace',
                             fontSize: 11,
-                            color: '#cbd5e1',
+                            color: palette.text.primary,
                           },
                         }}
                       />
@@ -529,9 +529,9 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                         px: 1.5,
                         py: 1,
                         borderRadius: 1.5,
-                        bgcolor: (t) => alpha(t.palette.success.main, 0.06),
+                        bgcolor: alpha(palette.accent.success, 0.06),
                         border: '1px solid',
-                        borderColor: (t) => alpha(t.palette.success.main, 0.12),
+                        borderColor: alpha(palette.accent.success, 0.12),
                         animation: 'fadeInUp 0.3s ease-out',
                       }}
                     >
@@ -552,7 +552,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                       <Typography
                         data-testid="vault-access-result"
                         sx={{
-                          color: '#86efac',
+                          color: palette.accent.success,
                           fontFamily: '"JetBrains Mono", monospace',
                           fontSize: 11,
                           wordBreak: 'break-all',
@@ -584,9 +584,8 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                           size="small"
                           sx={{
                             color: palette.accent.primary,
-                            bgcolor: (t) =>
-                              payloadPrompt?.length ? alpha(t.palette.primary.main, 0.08) : 'transparent',
-                            '&:hover': { bgcolor: (t) => alpha(t.palette.primary.main, 0.15) },
+                            bgcolor: payloadPrompt?.length ? alpha(palette.accent.primary, 0.08) : 'transparent',
+                            '&:hover': { bgcolor: alpha(palette.accent.primary, 0.15) },
                             '&.Mui-disabled': { opacity: 0.2 },
                           }}
                         >
@@ -605,11 +604,11 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                           size="small"
                           sx={{
                             color: palette.accent.info,
-                            bgcolor: (t) =>
+                            bgcolor:
                               recipientPrompt?.length && sharingKeyPrompt?.length
-                                ? alpha(t.palette.secondary.main, 0.08)
+                                ? alpha(palette.metal.chrome, 0.08)
                                 : 'transparent',
-                            '&:hover': { bgcolor: (t) => alpha(t.palette.secondary.main, 0.15) },
+                            '&:hover': { bgcolor: alpha(palette.metal.chrome, 0.15) },
                             '&.Mui-disabled': { opacity: 0.2 },
                           }}
                         >
@@ -626,8 +625,8 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                         size="small"
                         sx={{
                           color: palette.accent.success,
-                          bgcolor: (t) => alpha(t.palette.success.main, 0.08),
-                          '&:hover': { bgcolor: (t) => alpha(t.palette.success.main, 0.15) },
+                          bgcolor: alpha(palette.accent.success, 0.08),
+                          '&:hover': { bgcolor: alpha(palette.accent.success, 0.15) },
                         }}
                       >
                         <DownloadIcon fontSize="small" />
@@ -648,9 +647,9 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
                           size="small"
                           sx={{
                             color: palette.accent.error,
-                            bgcolor: (t) =>
-                              vaultState.state === State.SHARED ? alpha(t.palette.error.main, 0.08) : 'transparent',
-                            '&:hover': { bgcolor: (t) => alpha(t.palette.error.main, 0.15) },
+                            bgcolor:
+                              vaultState.state === State.SHARED ? alpha(palette.accent.error, 0.08) : 'transparent',
+                            '&:hover': { bgcolor: alpha(palette.accent.error, 0.15) },
                             '&.Mui-disabled': { opacity: 0.2 },
                           }}
                         >
@@ -677,7 +676,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
             paper: {
               sx: {
                 borderRadius: 3,
-                backgroundImage: `linear-gradient(135deg, ${alpha('#12162a', 0.95)} 0%, ${alpha('#0a0e27', 0.98)} 100%)`,
+                backgroundImage: `linear-gradient(135deg, ${alpha(palette.bg.surface, 0.95)} 0%, ${alpha(palette.bg.deepest, 0.98)} 100%)`,
                 backdropFilter: 'blur(24px)',
                 border: `1px solid ${alpha(palette.accent.error, 0.15)}`,
                 boxShadow: `0 24px 80px ${alpha('#000', 0.6)}`,
@@ -691,7 +690,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
             </Typography>
           </DialogTitle>
           <DialogContent sx={{ pt: 2 }}>
-            <Typography variant="body2" sx={{ color: '#94a3b8', fontSize: '0.8125rem', lineHeight: 1.6 }}>
+            <Typography variant="body2" sx={{ color: palette.text.secondary, fontSize: '0.8125rem', lineHeight: 1.6 }}>
               This will clear the recipient and encrypted sharing key from the vault, returning it to the PRIVATE state.
               The recipient will no longer be able to access the vault. This action cannot be undone.
             </Typography>
@@ -702,9 +701,12 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
               disableElevation
               onClick={handleCancelRevoke}
               sx={{
-                color: '#94a3b8',
-                borderColor: alpha('#94a3b8', 0.2),
-                '&:hover': { borderColor: alpha('#94a3b8', 0.4), bgcolor: alpha('#94a3b8', 0.04) },
+                color: palette.text.secondary,
+                borderColor: alpha(palette.text.secondary, 0.2),
+                '&:hover': {
+                  borderColor: alpha(palette.text.secondary, 0.4),
+                  bgcolor: alpha(palette.text.secondary, 0.04),
+                },
               }}
             >
               Cancel

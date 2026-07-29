@@ -48,7 +48,7 @@ export const TextPromptDialog: React.FC<Readonly<TextPromptDialogProps>> = ({ pr
         paper: {
           sx: {
             borderRadius: 3,
-            backgroundImage: `linear-gradient(135deg, ${alpha('#12162a', 0.95)} 0%, ${alpha('#0a0e27', 0.98)} 100%)`,
+            backgroundImage: `linear-gradient(135deg, ${alpha(palette.bg.surface, 0.95)} 0%, ${alpha(palette.bg.deepest, 0.98)} 100%)`,
             backdropFilter: 'blur(24px)',
             WebkitBackdropFilter: 'blur(24px)',
             border: `1px solid ${alpha(palette.accent.primary, 0.1)}`,
@@ -62,7 +62,7 @@ export const TextPromptDialog: React.FC<Readonly<TextPromptDialogProps>> = ({ pr
           variant="body1"
           data-testid="textprompt-dialog-title"
           sx={{
-            color: '#e2e8f0',
+            color: palette.text.primary,
             fontWeight: 600,
             fontSize: '0.9375rem',
             letterSpacing: '0.01em',
@@ -89,7 +89,7 @@ export const TextPromptDialog: React.FC<Readonly<TextPromptDialogProps>> = ({ pr
           slotProps={{
             htmlInput: {
               style: {
-                color: '#e2e8f0',
+                color: palette.text.primary,
                 fontFamily: '"JetBrains Mono", monospace',
                 fontSize: '0.8125rem',
               },
@@ -113,11 +113,11 @@ export const TextPromptDialog: React.FC<Readonly<TextPromptDialogProps>> = ({ pr
           disableElevation
           onClick={onCancel}
           sx={{
-            color: '#94a3b8',
-            borderColor: alpha('#94a3b8', 0.2),
+            color: palette.text.secondary,
+            borderColor: alpha(palette.text.secondary, 0.2),
             '&:hover': {
-              borderColor: alpha('#94a3b8', 0.4),
-              bgcolor: alpha('#94a3b8', 0.04),
+              borderColor: alpha(palette.text.secondary, 0.4),
+              bgcolor: alpha(palette.text.secondary, 0.04),
             },
           }}
         >
@@ -132,10 +132,10 @@ export const TextPromptDialog: React.FC<Readonly<TextPromptDialogProps>> = ({ pr
           type="submit"
           sx={{
             bgcolor: palette.accent.primary,
-            color: '#0a0e27',
+            color: palette.bg.deepest,
             fontWeight: 700,
             '&:hover': { bgcolor: alpha(palette.accent.primary, 0.85) },
-            '&.Mui-disabled': { bgcolor: alpha(palette.accent.primary, 0.15), color: alpha('#0a0e27', 0.3) },
+            '&.Mui-disabled': { bgcolor: alpha(palette.accent.primary, 0.15), color: alpha(palette.bg.deepest, 0.3) },
           }}
         >
           Submit

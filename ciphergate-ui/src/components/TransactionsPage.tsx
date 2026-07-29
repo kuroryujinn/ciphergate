@@ -60,10 +60,10 @@ export const TransactionsPage: React.FC = () => (
       </Box>
     </Box>
 
-    {/* Transaction Timeline — Full Width */}
+    {/* Transaction Timeline */}
     <TransactionTimeline />
 
-    {/* Vault Console */}
+    {/* Vault Security Console */}
     <HeroDashboard />
   </Box>
 );

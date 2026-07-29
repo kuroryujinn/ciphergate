@@ -114,6 +114,14 @@ const keyframeDefinitions = {
     from: { opacity: 0, transform: 'scaleY(0.95)' },
     to: { opacity: 1, transform: 'scaleY(1)' },
   },
+  '@keyframes fadeInUp': {
+    from: { opacity: 0, transform: 'translateY(12px)' },
+    to: { opacity: 1, transform: 'translateY(0)' },
+  },
+  '@keyframes float': {
+    '0%, 100%': { transform: 'translateY(0)' },
+    '50%': { transform: 'translateY(-6px)' },
+  },
   '@keyframes knobRotate': {
     from: { transform: 'rotate(0deg)' },
     to: { transform: 'rotate(45deg)' },

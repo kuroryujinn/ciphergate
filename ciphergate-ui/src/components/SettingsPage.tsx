@@ -1,7 +1,7 @@
 // CipherGate Settings Page — System Configuration Console
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, alpha, Switch } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/SettingsOutlined';
 import DnsIcon from '@mui/icons-material/DnsOutlined';
@@ -20,7 +20,7 @@ interface SettingRowProps {
 }
 
 const SettingRow: React.FC<SettingRowProps> = ({ icon, label, description, defaultChecked = false }) => {
-  const [checked, setChecked] = React.useState(defaultChecked);
+  const [checked, setChecked] = useState(defaultChecked);
   return (
     <Box
       sx={{

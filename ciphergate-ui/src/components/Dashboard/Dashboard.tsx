@@ -186,8 +186,6 @@ export const Dashboard: React.FC = () => {
         display: 'flex',
         flexDirection: 'column',
         gap: 2.5,
-        maxWidth: 1400,
-        mx: 'auto',
         animation: 'slideInUp 0.3s ease-out',
       }}
     >
