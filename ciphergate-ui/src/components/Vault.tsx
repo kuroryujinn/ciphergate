@@ -183,7 +183,7 @@ export const Vault: React.FC<Readonly<VaultProps>> = ({ vaultDeployment$ }) => {
   };
 
   return (
-    <Fade in timeout={400}>
+    <Fade in timeout={300}>
       <Card
         sx={{
           position: 'relative',
